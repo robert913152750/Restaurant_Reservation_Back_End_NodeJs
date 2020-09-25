@@ -3,8 +3,13 @@ const router = express.Router()
 const restController = require('../controllers/api/restController')
 
 router.get(
-  '/restaurants',
+  '/home',
   restController.getRestaurants
+)
+
+router.get(
+  '/restaurant/:id',
+  restController.getRestaurant
 )
 
 module.exports = router

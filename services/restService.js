@@ -13,7 +13,19 @@ const restService = {
     }).then(restaurants => {
       callback({ restaurants: restaurants })
     })
+  },
+  getRestaurant: (req, res, callback) => {
+    return Restaurant.findByPk(req.params.id, {
+      include: [
+        { model: Category },
+        { model: City }
+      ]
+    }).then(restaurant => {
+      callback({ restaurant: restaurant })
+    })
   }
+
+
 
 
 
