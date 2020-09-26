@@ -1,10 +1,14 @@
 const express = require('express')
 const app = express()
-// const db = require('./models')
-const port = 3000
+const bodyParser = require('body-parser')
 
 
-app.listen(port, () => {
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
+app.use(bodyParser.urlencoded({ extended: true }))
+app.listen(process.env.PORT, () => {
   console.log('app is running on express ')
 })
 
