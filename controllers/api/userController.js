@@ -9,6 +9,23 @@ const ExtractJwt = passportJWT.ExtractJwt
 const JwtStrategy = passportJWT.Strategy
 
 let userController = {
+  signUp: (req, res) => {
+    if (req.body.password !== req.body.passwordCheck) {
+      return res.json({ status: 'error', message: '密碼與確認密碼不同' })
+    }
+    User.findOne({ where: { email: req.body.email } }).then(user => {
+      if (user) return res.json({ status: 'error', message: '信箱重複' })
+      User.create({
+        name: req.body.name,
+        email: req.body.email,
+        password: bcrypt.hashSync(req.body.password, bcrypt.genSaltSync(10), null),
+        role: 'common'
+      }).then(user => {
+        return res.json({ status: 'success', message: '帳號註冊成功' })
+      })
+    })
+
+  },
   signIn: (req, res) => {
     //檢查是否為空值
     if (!req.body.email || !req.body.password) {

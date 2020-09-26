@@ -17,6 +17,7 @@ const authenticatedBusiness = (req, res, next) => {
 }
 
 //router
+router.post('/signup', userController.signUp)
 router.post('/signin', userController.signIn)
 router.get('/home', authenticated, restController.getRestaurants)
 router.get('/restaurant/:id', authenticated, restController.getRestaurant)
