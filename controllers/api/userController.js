@@ -1,3 +1,4 @@
+const userService = require('../../services/userService')
 const bcrypt = require('bcryptjs')
 const db = require('../../models')
 const User = db.User

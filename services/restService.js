@@ -80,7 +80,8 @@ const restService = {
     }).then(restaurant => {
       callback({ restaurant: restaurant })
     })
-  }
+  },
+
 
 
 
