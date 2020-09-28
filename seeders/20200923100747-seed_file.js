@@ -85,8 +85,7 @@ module.exports = {
 
     await queryInterface.bulkInsert(
       'Restaurants',
-      Array.from({ length: 50 }).map((_, index) => ({
-        UserId: Math.floor(Math.random() * 2 + 3),
+      Array.from({ length: 48 }).map((_, index) => ({
         CategoryId: Math.floor(Math.random() * 4 + 1),
         CityId: Math.floor(Math.random() * 6 + 1),
         name: faker.name.findName(),
@@ -99,6 +98,37 @@ module.exports = {
         createdAt: new Date(),
         updatedAt: new Date()
       })), {}
+    )
+
+    await queryInterface.bulkInsert(
+      'Restaurants',
+      [{
+        UserId: 3,
+        CategoryId: Math.floor(Math.random() * 4 + 1),
+        CityId: Math.floor(Math.random() * 6 + 1),
+        name: faker.name.findName(),
+        description: faker.lorem.text(),
+        address: faker.address.streetAddress(),
+        image: faker.image.imageUrl(),
+        price: price[Math.floor(Math.random() * 2)],
+        maximum_seat: Math.floor(Math.random() * 30 + 10),
+        open_time: '12:00 ~ 21:00',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }, {
+        UserId: 4,
+        CategoryId: Math.floor(Math.random() * 4 + 1),
+        CityId: Math.floor(Math.random() * 6 + 1),
+        name: faker.name.findName(),
+        description: faker.lorem.text(),
+        address: faker.address.streetAddress(),
+        image: faker.image.imageUrl(),
+        price: price[Math.floor(Math.random() * 2)],
+        maximum_seat: Math.floor(Math.random() * 30 + 10),
+        open_time: '12:00 ~ 21:00',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }]
     )
 
     await queryInterface.bulkInsert(
