@@ -58,6 +58,11 @@ let userController = {
         }
       })
     })
+  },
+  postComment: (req, res) => {
+    userService.postComment(req, res, (data) => {
+      return res.json(data)
+    })
   }
 }
 
