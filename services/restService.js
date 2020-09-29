@@ -71,17 +71,31 @@ const restService = {
         })
       })
     })
+      .catch(err => res.send(err))
   },
   getRestaurant: (req, res, callback) => {
-    return Restaurant.findByPk(req.params.id, {
+    Restaurant.findByPk(req.params.id, {
       include: [
         { model: Category },
         { model: City },
         { model: Comment }
       ]
     }).then(restaurant => {
-      callback({ restaurant: restaurant })
+      let ratingAverage = function () {
+        let ratingTotall = 0
+        for (i = 0; i < restaurant.Comments.length; i++) {
+          ratingTotall += restaurant.Comments[i].rating
+        }
+        return ratingTotall / restaurant.Comments.length
+      }
+
+      let ratingAve = ratingAverage()
+      callback({
+        restaurant: restaurant,
+        ratingAve: ratingAve
+      })
     })
+      .catch(err => res.send(err))
   },
 
 
