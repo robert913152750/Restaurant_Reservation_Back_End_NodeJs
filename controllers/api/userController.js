@@ -1,3 +1,4 @@
+const userService = require('../../services/userService')
 const bcrypt = require('bcryptjs')
 const db = require('../../models')
 const User = db.User
@@ -56,6 +57,11 @@ let userController = {
           role: user.role
         }
       })
+    })
+  },
+  postComment: (req, res) => {
+    userService.postComment(req, res, (data) => {
+      return res.json(data)
     })
   }
 }
