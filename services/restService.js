@@ -2,6 +2,7 @@ const db = require('../models')
 const Restaurant = db.Restaurant
 const Category = db.Category
 const City = db.City
+const Comment = db.Comment
 const pageLimit = 12
 
 const restService = {
@@ -75,7 +76,8 @@ const restService = {
     return Restaurant.findByPk(req.params.id, {
       include: [
         { model: Category },
-        { model: City }
+        { model: City },
+        { model: Comment }
       ]
     }).then(restaurant => {
       callback({ restaurant: restaurant })
