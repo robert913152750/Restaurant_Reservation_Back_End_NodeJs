@@ -86,10 +86,11 @@ const restService = {
         for (i = 0; i < restaurant.Comments.length; i++) {
           ratingTotall += restaurant.Comments[i].rating
         }
-        return ratingTotall / restaurant.Comments.length
+        return (ratingTotall / restaurant.Comments.length).toFixed(1)
       }
 
       let ratingAve = ratingAverage()
+      console.log(ratingAve)
       callback({
         restaurant: restaurant,
         ratingAve: ratingAve
