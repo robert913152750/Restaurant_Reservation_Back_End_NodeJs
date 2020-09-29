@@ -84,17 +84,8 @@ const restService = {
         { model: Comment, include: [{ model: User }] }
       ]
     }).then(restaurant => {
-      const ratingAverage = function () {
-        let ratingTotall = 0
-        for (i = 0; i < restaurant.Comments.length; i++) {
-          ratingTotall += restaurant.Comments[i].rating
-        }
-        return (ratingTotall / restaurant.Comments.length).toFixed(1)
-      }
-      let ratingAve = ratingAverage(restaurant)
       callback({
-        restaurant: restaurant,
-        ratingAve: ratingAve
+        restaurant: restaurant
       })
     })
       .catch(err => res.send(err))
