@@ -8,21 +8,21 @@ const restService = {
   getRestaurants: (req, res, callback) => {
     let offset = 0
     let whereQuery = {}
-    let categoryId = ''
-    let cityId = ''
+    let CategoryId = ''
+    let CityId = ''
 
     if (req.query.page) {
       offset = (req.query.page - 1) * pageLimit
     }
 
-    if (req.query.categoryId) {
-      categoryId = Number(req.query.categoryId)
-      whereQuery['categoryId'] = categoryId
+    if (req.query.CategoryId) {
+      CategoryId = Number(req.query.CategoryId)
+      whereQuery['CategoryId'] = CategoryId
     }
 
-    if (req.query.cityId) {
-      cityId = Number(req.query.cityId)
-      whereQuery['cityId'] = cityId
+    if (req.query.CityId) {
+      CityId = Number(req.query.CityId)
+      whereQuery['CityId'] = CityId
     }
 
     Restaurant.findAndCountAll({
@@ -60,8 +60,8 @@ const restService = {
             restaurants: restaurants,
             categories: categories,
             cities: cities,
-            categoryId: categoryId,
-            cityId: cityId,
+            CategoryId: CategoryId,
+            CityId: CityId,
             page: page,
             totalPage: totalPage,
             prev: prev,
