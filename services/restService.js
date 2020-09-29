@@ -71,6 +71,7 @@ const restService = {
         })
       })
     })
+      .catch(err => res.send(err))
   },
   getRestaurant: (req, res, callback) => {
     Restaurant.findByPk(req.params.id, {
@@ -94,6 +95,7 @@ const restService = {
         ratingAve: ratingAve
       })
     })
+      .catch(err => res.send(err))
   },
 
 
