@@ -96,7 +96,7 @@ module.exports = {
         maximum_seat: Math.floor(Math.random() * 30 + 10),
         open_time: '12:00 ~ 21:00',
         phone: faker.phone.phoneNumber(),
-        ratingAve: '',
+        ratingAve: (Math.random() * 5 + 1).toFixed(1).toString(),
         createdAt: new Date(),
         updatedAt: new Date()
       })), {}
@@ -116,7 +116,7 @@ module.exports = {
         maximum_seat: Math.floor(Math.random() * 30 + 10),
         open_time: '12:00 ~ 21:00',
         phone: faker.phone.phoneNumber(),
-        ratingAve: '',
+        ratingAve: (Math.random() * 5 + 1).toFixed(1).toString(),
         createdAt: new Date(),
         updatedAt: new Date()
       }, {
@@ -131,7 +131,7 @@ module.exports = {
         maximum_seat: Math.floor(Math.random() * 30 + 10),
         open_time: '12:00 ~ 21:00',
         phone: faker.phone.phoneNumber(),
-        ratingAve: '',
+        ratingAve: (Math.random() * 5 + 1).toFixed(1).toString(),
         createdAt: new Date(),
         updatedAt: new Date()
       }]
