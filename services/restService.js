@@ -3,7 +3,9 @@ const Restaurant = db.Restaurant
 const Category = db.Category
 const City = db.City
 const Comment = db.Comment
+const User = db.User
 const pageLimit = 12
+
 
 const restService = {
   getRestaurants: (req, res, callback) => {
@@ -42,6 +44,7 @@ const restService = {
       let prev = page - 1 < 1 ? 1 : page - 1
       let next = page + 1 > pages ? pages : page + 1
 
+
       const data = restaurants.rows.map(r => ({
         ...r.dataValues,
         description: r.dataValues.description.substring(0, 50),
@@ -78,21 +81,11 @@ const restService = {
       include: [
         { model: Category },
         { model: City },
-        { model: Comment }
+        { model: Comment, include: [{ model: User }] }
       ]
     }).then(restaurant => {
-      let ratingAverage = function () {
-        let ratingTotall = 0
-        for (i = 0; i < restaurant.Comments.length; i++) {
-          ratingTotall += restaurant.Comments[i].rating
-        }
-        return ratingTotall / restaurant.Comments.length
-      }
-
-      let ratingAve = ratingAverage()
       callback({
-        restaurant: restaurant,
-        ratingAve: ratingAve
+        restaurant: restaurant
       })
     })
       .catch(err => res.send(err))

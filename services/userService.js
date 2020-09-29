@@ -1,6 +1,7 @@
 const db = require('../models')
 const User = db.User
 const Comment = db.Comment
+const Restaurant = db.Restaurant
 
 
 let userService = {
@@ -12,11 +13,28 @@ let userService = {
       content: req.body.content,
       rating: req.body.rating
     }).then(comment => {
-      return callback({
-        status: 'success',
-        message: '評論新增成功',
-        comment: comment
+      Restaurant.findByPk(req.body.RestaurantId, {
+        include: [{ model: Comment }]
+      }).then(restaurant => {
+        const ratingAverage = function () {
+          let ratingTotall = 0
+          for (i = 0; i < restaurant.Comments.length; i++) {
+            ratingTotall += restaurant.Comments[i].rating
+          }
+          return (ratingTotall / restaurant.Comments.length).toFixed(1)
+        }
+        let ratingAve = ratingAverage(restaurant)
+        restaurant.update({
+          ratingAve: ratingAve.toString()
+        }).then(restaurant => {
+          return callback({
+            status: 'success',
+            message: '評論新增成功',
+            comment: comment
+          })
+        })
       })
+
     })
       .catch(err => res.send(err))
   }
