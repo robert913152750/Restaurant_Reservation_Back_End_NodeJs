@@ -5,6 +5,15 @@ const Restaurant = db.Restaurant
 
 
 let userService = {
+  getUser: (req, res, callback) => {
+    return User.findByPk(req.user.dataValues.id, {
+      include: [
+        { model: Restaurant }
+      ]
+    }).then(user => {
+      callback({ profile: user })
+    })
+  },
   postComment: (req, res, callback) => {
     if (!req.body.rating) return callback({ status: 'error', message: '評分為必填' })
     Comment.create({
