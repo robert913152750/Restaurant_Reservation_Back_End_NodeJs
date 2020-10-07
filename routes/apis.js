@@ -19,8 +19,9 @@ const authenticatedBusiness = (req, res, next) => {
 //router
 router.post('/signup', userController.signUp)
 router.post('/signin', userController.signIn)
-router.get('/home', authenticated, restController.getRestaurants)
-router.get('/restaurant/:id', authenticated, restController.getRestaurant)
+router.get('/get_current_user', authenticated, userController.getUser)
+router.get('/home', restController.getRestaurants)
+router.get('/restaurant/:id', restController.getRestaurant)
 router.post('/comment', authenticated, userController.postComment)
 
 module.exports = router

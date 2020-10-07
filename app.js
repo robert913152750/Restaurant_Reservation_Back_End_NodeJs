@@ -11,6 +11,10 @@ const passport = require('./config/passport')
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
+app.use((req, res, next) => {
+  res.locals.user = req.user
+  next()
+})
 app.listen(process.env.PORT, () => {
   console.log('app is running on express ')
 })

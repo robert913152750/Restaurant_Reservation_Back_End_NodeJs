@@ -45,18 +45,23 @@ let userController = {
 
       let payload = { id: user.id }
       let token = jwt.sign(payload, process.env.JWT_SECRET)
-
+      user = {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        role: user.role
+      }
       return res.json({
         status: 'success',
         message: 'ok',
         token: token,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          role: user.role
-        }
+        user: user
       })
+    })
+  },
+  getUser: (req, res) => {
+    userService.getUser(req, res, (data) => {
+      return res.json(data)
     })
   },
   postComment: (req, res) => {
