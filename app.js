@@ -2,6 +2,7 @@ const express = require('express')
 const app = express()
 const cors = require('cors')
 const bodyParser = require('body-parser')
+const port = process.env.PORT || 3000
 
 if (process.env.NODE_ENV !== 'production') {
   require('dotenv').config()
@@ -15,7 +16,7 @@ app.use((req, res, next) => {
   res.locals.user = req.user
   next()
 })
-app.listen(process.env.PORT, () => {
+app.listen(port, () => {
   console.log('app is running on express ')
 })
 
