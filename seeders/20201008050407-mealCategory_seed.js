@@ -11,14 +11,20 @@ module.exports = {
       '沙拉'
     ]
 
+    const restaurantCont = 50
+
+    await queryInterface.bulkInsert(
+      'MealCategories',
+      Array.from({ length: 300 }).map((_, index) => ({
+        RestaurantId: (index % restaurantCont) + 1,
+        name: categories[(index % restaurantCont) % 6],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }))
+    )
   },
 
   down: async (queryInterface, Sequelize) => {
-    /**
-     * Add commands to revert seed here.
-     *
-     * Example:
-     * await queryInterface.bulkDelete('People', null, {});
-     */
+    await queryInterface.bulkDelete('MealCategories', null, {})
   }
 };

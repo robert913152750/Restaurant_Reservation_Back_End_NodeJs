@@ -96,7 +96,7 @@ module.exports = {
         maximum_seat: Math.floor(Math.random() * 30 + 10),
         open_time: '12:00 ~ 21:00',
         phone: faker.phone.phoneNumber(),
-        ratingAve: (Math.random() * 5 + 1).toFixed(1).toString(),
+        ratingAve: (Math.random() * 4 + 1).toFixed(1).toString(),
         createdAt: new Date(),
         updatedAt: new Date()
       })), {}
@@ -139,11 +139,12 @@ module.exports = {
 
     await queryInterface.bulkInsert(
       'Meals',
-      Array.from({ length: 200 }).map((_, index) => ({
-        RestaurantId: Math.floor(Math.random() * 50 + 1),
+      Array.from({ length: 300 }).map((_, index) => ({
+        RestaurantId: (index % 50) + 1,
         name: faker.name.findName(),
         price: Math.floor(Math.random() * 240 + 60),
         image: faker.image.food(),
+        MealCategoryId: index + 1,
         createdAt: new Date(),
         updatedAt: new Date()
       })), {}
