@@ -5,6 +5,7 @@ const City = db.City
 const Comment = db.Comment
 const User = db.User
 const pageLimit = 12
+const mealPageLimit = 10
 
 
 const restService = {
@@ -90,6 +91,9 @@ const restService = {
     })
       .catch(err => res.send(err))
   },
+  getMeals: (req, res, callback) => {
+
+  }
 
 
 
