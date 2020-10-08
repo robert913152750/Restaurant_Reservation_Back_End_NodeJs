@@ -11,6 +11,11 @@ const restController = {
     restService.getRestaurant(req, res, (data) => {
       return res.json(data)
     })
+  },
+  getMeals: (req, res) => {
+    restService.getMeals(req, res, (data) => {
+      return res.json(data)
+    })
   }
 }
 

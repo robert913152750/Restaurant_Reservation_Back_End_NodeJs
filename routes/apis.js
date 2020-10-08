@@ -22,6 +22,7 @@ router.post('/signin', userController.signIn)
 router.get('/get_current_user', authenticated, userController.getUser)
 router.get('/home', restController.getRestaurants)
 router.get('/restaurant/:id', restController.getRestaurant)
+router.get('/reservation/:id', restController.getMeals)
 router.post('/comment', authenticated, userController.postComment)
 
 module.exports = router
