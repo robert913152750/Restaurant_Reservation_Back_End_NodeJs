@@ -16,6 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       Restaurant.hasMany(models.Meal)
       Restaurant.hasOne(models.RestaurantSeat)
       Restaurant.hasMany(models.Comment)
+      Restaurant.hasMany(models.MealCategory)
     }
   };
   Restaurant.init({
