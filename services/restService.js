@@ -122,14 +122,13 @@ const restService = {
 
       const data = meals.rows.map(m => ({
         ...m.dataValues,
-        mealCategory: m.dataValues.MealCategory.name
       }))
 
       MealCategory.findAll({
         where: { RestaurantId: RestaurantId }
       }).then(categories => {
         return callback({
-          meal: data,
+          meals: data,
           mealCategory: categories,
           totalPage: totalPage,
           prev: prev,
