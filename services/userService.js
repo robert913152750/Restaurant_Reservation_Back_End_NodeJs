@@ -2,6 +2,8 @@ const db = require('../models')
 const User = db.User
 const Comment = db.Comment
 const Restaurant = db.Restaurant
+const Meal = db.Meal
+const MealCategory = db.MealCategory
 
 
 let userService = {
@@ -46,6 +48,9 @@ let userService = {
 
     })
       .catch(err => res.send(err))
+  },
+  postReservation: (req, res, callback) => {
+
   }
 
 }
