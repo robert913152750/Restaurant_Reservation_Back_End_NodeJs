@@ -68,6 +68,11 @@ let userController = {
     userService.postComment(req, res, (data) => {
       return res.json(data)
     })
+  },
+  postReservation: (req, res) => {
+    userService.postReservation(req, res, (data) => {
+      return res.json(data)
+    })
   }
 }
 
