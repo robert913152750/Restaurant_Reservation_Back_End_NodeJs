@@ -3,6 +3,10 @@ const router = express.Router()
 const passport = require('../config/passport')
 const restController = require('../controllers/api/restController')
 const userController = require('../controllers/api/userController')
+const businessController = require('../controllers/api/businessController')
+const businessService = require('../services/businessService')
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
 
 //passport middleware
 const authenticated = passport.authenticate('jwt', { session: false })
@@ -25,5 +29,10 @@ router.get('/restaurant/:id', restController.getRestaurant)
 router.get('/reservation/:id', restController.getMeals)
 router.post('/comment', authenticated, userController.postComment)
 router.post('/reservation/:id', authenticated, userController.postReservation)
+
+router.get('/business/:id/restaurant', businessController.getRestaurant)
+router.get('/business/:id/menu', businessController.getMenu)
+router.put('/business/:id/restaurant', upload.single('image'), businessService.putRestaurant)
+router.put('/business/:id/menu', upload.single('image'), businessController.putMenu)
 
 module.exports = router
