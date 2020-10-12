@@ -5,6 +5,8 @@ const restController = require('../controllers/api/restController')
 const userController = require('../controllers/api/userController')
 const businessController = require('../controllers/api/businessController')
 const businessService = require('../services/businessService')
+const multer = require('multer')
+const upload = multer({ dest: 'temp/' })
 
 //passport middleware
 const authenticated = passport.authenticate('jwt', { session: false })
@@ -29,7 +31,7 @@ router.post('/comment', authenticated, userController.postComment)
 
 router.get('/business/:id/restaurant', businessController.getRestaurant)
 router.get('/business/:id/menu', businessController.getMenu)
-router.put('/business/:id/restaurant', businessService.putRestaurant)
-router.put('/business/:id/menu', businessController.putMenu)
+router.put('/business/:id/restaurant', upload.single('image'), businessService.putRestaurant)
+router.put('/business/:id/menu', upload.single('image'), businessController.putMenu)
 
 module.exports = router

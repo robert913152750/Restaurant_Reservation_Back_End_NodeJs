@@ -71,9 +71,8 @@ const businessService = {
     try {
       const { name, categoryId, description, phone, address, open_time } = req.body
       const restaurantId = req.params.id
-      if (!name) {
-        console.log(req.body)
-        return callback({ status: 'error', message: '請輸入餐廳名稱'})
+      if (!name || !categoryId) {
+        return callback({ status: 'error', message: '請輸入餐廳名稱和類別'})
       }
       const { file } = req
       const restaurant = await Restaurant.findByPk(restaurantId)
@@ -108,7 +107,7 @@ const businessService = {
       const { MealId, name, MealCategoryId, description, price, isSale } = req.body
       
       if (!name || !MealCategoryId || !price) {
-        throw new Error('所有欄位必填')
+        return callback({ status: 'error', message: '名稱、類別、價格為必填'})
       }
       const { file } = req
       const meal = await Meal.findByPk(MealId)
@@ -136,7 +135,37 @@ const businessService = {
     }
   },
   async postMeal (req, res, callback) {
+    try {
+      const restaurantId = req.params.id
+      const { file } = req
+      const { name, MealCategoryId, description, price, isSale } = req.body
 
+      if (!name || !MealCategoryId || !price) {
+        throw new Error()
+      }
+
+      if (file) {
+        imgur.setClientID(IMGUR_CLIENT_ID)
+        imgur.upload(file.path, (err, img) => {
+          return Meal.create({
+            name, MealCategoryId, description, price, isSale,
+            RestaurantId: restaurantId,
+            image: img.data.link
+          }).then((meal) => {
+            callback({ status: 'success', message: '成功新增餐點', meal})
+          })
+        })    
+      } else {
+        return Meal.create({
+          name, MealCategoryId, description, price, isSale,
+          RestaurantId: restaurantId
+        }).then((meal) => {
+          callback({ status: 'success', message: '成功新增餐點', meal})
+        })
+      }
+    } catch (err) {
+      callback({ status: 'error', message: '新增餐點失敗，請稍後再試'})
+    }
   }
 }
 
