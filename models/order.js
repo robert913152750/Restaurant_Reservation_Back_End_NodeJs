@@ -18,13 +18,14 @@ module.exports = (sequelize, DataTypes) => {
   Order.init({
     UserId: DataTypes.INTEGER,
     RestaurantSeatsId: DataTypes.INTEGER,
-    time: DataTypes.DATE,
+    time: DataTypes.STRING,
     peopleCount: DataTypes.INTEGER,
     note: DataTypes.STRING,
     reserve_name: DataTypes.STRING,
     reserve_phone: DataTypes.STRING,
-    date: DataTypes.DATE,
-    status: DataTypes.STRING
+    date: DataTypes.STRING,
+    status: DataTypes.STRING,
+    totalPrice: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Order',

@@ -54,10 +54,16 @@ let userService = {
       .catch(err => res.send(err))
   },
   postReservation: (req, res, callback) => {
-
-    if (!req.body.peopleCont || !req.body.time || !req.body.reserveName || !req.body.reservePhone) {
+    if (!req.body.info.seat || !req.body.info.time || !req.body.info.name || !req.body.info.phone || !req.body.info.date || !req.body.info.totalPrice) {
       return callback({ status: 'error', message: '所有欄位為必填' })
     }
+    const seatCount = req.body.info.seat
+    const time = req.body.info.time
+    const name = req.body.info.name
+    const phone = req.body.info.phone
+    const date = req.body.info.date
+    const note = req.body.info.note
+    const totalPrice = req.body.info.totalPrice
 
     RestaurantSeat.findOne({
       where: { RestaurantId: req.params.id }
@@ -65,12 +71,13 @@ let userService = {
       Order.create({
         UserId: Number(req.user.dataValues.id),
         RestaurantSeatsId: Number(seat.dataValues.id),
-        time: new Date(),
-        peopleCont: req.body.peopleCont,
-        note: req.body.note,
-        reserveName: req.body.reserveName,
-        reservePhone: req.body.reservePhone,
-        date: new Date()
+        time: time.toString(),
+        peopleCount: seatCount,
+        note: note,
+        reserve_name: name,
+        reserve_phone: phone,
+        date: date.toString(),
+        totalPrice: Number(totalPrice)
       }).then((order) => {
         let meals = req.body.orders
         OrderItem.bulkCreate(
@@ -80,9 +87,8 @@ let userService = {
             quantity: Number(meals[index].quantity)
           }))
         ).then((bulk) => {
-          let restSeat = seat.seat - order.peopleCont
-          console.log(restSeat)
-          RestaurantSeat.update({
+          let restSeat = seat.seat - order.peopleCount
+          seat.update({
             seat: restSeat
           }).then(() => {
             return callback({
@@ -95,7 +101,7 @@ let userService = {
 
       })
     })
-    // .catch(err => res.send(err))
+      .catch(err => res.send(err))
   }
 }
 
