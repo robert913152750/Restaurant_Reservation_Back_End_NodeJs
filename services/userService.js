@@ -2,6 +2,12 @@ const db = require('../models')
 const User = db.User
 const Comment = db.Comment
 const Restaurant = db.Restaurant
+const Meal = db.Meal
+const MealCategory = db.MealCategory
+const RestaurantSeat = db.RestaurantSeat
+const Order = db.Order
+const OrderItem = db.OrderItem
+
 
 
 let userService = {
@@ -46,8 +52,51 @@ let userService = {
 
     })
       .catch(err => res.send(err))
-  }
+  },
+  postReservation: (req, res, callback) => {
 
+    if (!req.body.peopleCont || !req.body.time || !req.body.reserveName || !req.body.reservePhone) {
+      return callback({ status: 'error', message: '所有欄位為必填' })
+    }
+
+    RestaurantSeat.findOne({
+      where: { RestaurantId: req.params.id }
+    }).then((seat) => {
+      Order.create({
+        UserId: Number(req.user.dataValues.id),
+        RestaurantSeatsId: Number(seat.dataValues.id),
+        time: new Date(),
+        peopleCont: req.body.peopleCont,
+        note: req.body.note,
+        reserveName: req.body.reserveName,
+        reservePhone: req.body.reservePhone,
+        date: new Date()
+      }).then((order) => {
+        let meals = req.body.orders
+        OrderItem.bulkCreate(
+          Array.from({ length: meals.length }).map((_, index) => ({
+            MealId: Number(meals[index].id),
+            OrderId: Number(order.dataValues.id),
+            quantity: Number(meals[index].quantity)
+          }))
+        ).then((bulk) => {
+          let restSeat = seat.seat - order.peopleCont
+          console.log(restSeat)
+          RestaurantSeat.update({
+            seat: restSeat
+          }).then(() => {
+            return callback({
+              status: 'success',
+              message: '訂位&訂餐成功',
+              order: order
+            })
+          })
+        })
+
+      })
+    })
+    // .catch(err => res.send(err))
+  }
 }
 
 module.exports = userService
