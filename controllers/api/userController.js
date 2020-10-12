@@ -75,7 +75,7 @@ let userController = {
     })
   },
   getOrders: (req, res) => {
-    userController.getOrders(req, res, (data) => {
+    userService.getOrders(req, res, (data) => {
       return res.json(data)
     })
   }
