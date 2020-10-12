@@ -54,35 +54,34 @@ let userService = {
       .catch(err => res.send(err))
   },
   postReservation: (req, res, callback) => {
-    if (!req.body.peopleCont || !req.body.time || !req.body.reserveName || !req.body.reservePhone || !req.body.date) {
+
+    if (!req.body.peopleCont || !req.body.time || !req.body.reserveName || !req.body.reservePhone) {
       return callback({ status: 'error', message: '所有欄位為必填' })
     }
 
     RestaurantSeat.findOne({
       where: { RestaurantId: req.params.id }
     }).then((seat) => {
-      console.log(req.params.id)
-      console.log(seat)
       Order.create({
-        UserId: req.user.dataValues,
-        RestaurantSeatId: seat.id,
-        time: req.body.time,
+        UserId: Number(req.user.dataValues.id),
+        RestaurantSeatsId: Number(seat.dataValues.id),
+        time: new Date(),
         peopleCont: req.body.peopleCont,
         note: req.body.note,
         reserveName: req.body.reserveName,
         reservePhone: req.body.reservePhone,
-        date: req.body.date
+        date: new Date()
       }).then((order) => {
         let meals = req.body.orders
-
         OrderItem.bulkCreate(
           Array.from({ length: meals.length }).map((_, index) => ({
-            MealId: meals[index][id],
-            OrderId: order.id,
-            quantity: meals[index][quantity]
+            MealId: Number(meals[index].id),
+            OrderId: Number(order.dataValues.id),
+            quantity: Number(meals[index].quantity)
           }))
         ).then((bulk) => {
           let restSeat = seat.seat - order.peopleCont
+          console.log(restSeat)
           RestaurantSeat.update({
             seat: restSeat
           }).then(() => {
