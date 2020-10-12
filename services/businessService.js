@@ -69,9 +69,10 @@ const businessService = {
   },
   async putRestaurant (req, res, callback) {
     try {
-      const { name, category, description, phone, address } = req.body
-      const { id: restaurantId } = req.params
+      const { name, categoryId, description, phone, address, open_time } = req.body
+      const restaurantId = req.params.id
       if (!name) {
+        console.log(req.body)
         return callback({ status: 'error', message: '請輸入餐廳名稱'})
       }
       const { file } = req
@@ -81,7 +82,8 @@ const businessService = {
         imgur.setClientID(IMGUR_CLIENT_ID)
         imgur.upload(file.path, (err, img) => {
           return restaurant.update({
-            name, phone, category, description, address,
+            name, phone, description, address, open_time,
+            CategoryId: categoryId, 
             image: img.data.link
           }).then(() => {
             callback({ status: 'success', message: '成功更新餐廳'})
@@ -89,15 +91,52 @@ const businessService = {
         })
       } else {
         return restaurant.update({
-          name, phone, category, description, address,
+          name, phone, description, address, open_time,
+          CategoryId: categoryId,
           image: restaurant.image
         }).then(() => {
           callback({ status: 'success', message: '成功更新餐廳'})
         })
       }
     } catch (err) {
+      console.error(err)
       callback({ status: 'error', message: '無法更新餐廳，請稍後再試'})
     }
+  },
+  async putMenu (req, res, callback) {
+    try {
+      const { MealId, name, MealCategoryId, description, price, isSale } = req.body
+      
+      if (!name || !MealCategoryId || !price) {
+        throw new Error('所有欄位必填')
+      }
+      const { file } = req
+      const meal = await Meal.findByPk(MealId)
+      if (file) {
+        imgur.setClientID(IMGUR_CLIENT_ID)
+        imgur.upload(file.path, (err, img) => {
+          return meal.update({
+            name, description, price, isSale, MealCategoryId,
+            image: img.data.link
+          }).then(() => {
+            callback({ status: 'success', message: '成功更改餐點資訊'})
+          })
+        })
+      } else {
+        return meal.update({
+          name, description, price, isSale, MealCategoryId,
+          image: meal.image
+        }).then(() => {
+          callback({ status: 'success', message: '成功更改餐點資訊'})
+        })
+      }
+    } catch (err) {
+      console.error(err)
+      callback({ status: 'error', message: '更新失敗，請稍後再試'})
+    }
+  },
+  async postMeal (req, res, callback) {
+
   }
 }
 
