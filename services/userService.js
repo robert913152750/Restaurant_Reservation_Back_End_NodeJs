@@ -8,8 +8,6 @@ const RestaurantSeat = db.RestaurantSeat
 const Order = db.Order
 const OrderItem = db.OrderItem
 
-
-
 let userService = {
   getUser: (req, res, callback) => {
     return User.findByPk(req.user.dataValues.id, {
@@ -57,13 +55,9 @@ let userService = {
     if (!req.body.info.seat || !req.body.info.time || !req.body.info.name || !req.body.info.phone || !req.body.info.date || !req.body.info.totalPrice) {
       return callback({ status: 'error', message: '所有欄位為必填' })
     }
+    const { time, name, phone, date, note, totalPrice } = req.body.info
     const seatCount = req.body.info.seat
-    const time = req.body.info.time
-    const name = req.body.info.name
-    const phone = req.body.info.phone
-    const date = req.body.info.date
-    const note = req.body.info.note
-    const totalPrice = req.body.info.totalPrice
+
 
     RestaurantSeat.findOne({
       where: { RestaurantId: req.params.id }
@@ -102,6 +96,22 @@ let userService = {
       })
     })
       .catch(err => res.send(err))
+  },
+  getOrders: (req, res, callback) => {
+    if (req.query.category === 'coming') {
+      const today = new Date()
+      Order.findAll({
+        where: {
+          UserId: Number(req.user.dataValues.id),
+          [Op.gte]: [
+            { date: today }
+          ]
+        }
+      }).then((orders) => {
+        console.log(orders)
+        callback({ orders: orders })
+      })
+    }
   }
 }
 

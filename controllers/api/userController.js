@@ -73,6 +73,11 @@ let userController = {
     userService.postReservation(req, res, (data) => {
       return res.json(data)
     })
+  },
+  getOrders: (req, res) => {
+    userController.getOrders(req, res, (data) => {
+      return res.json(data)
+    })
   }
 }
 
