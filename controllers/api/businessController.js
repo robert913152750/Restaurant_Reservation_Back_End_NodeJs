@@ -10,6 +10,11 @@ const businessController = {
     businessService.getMenu(req, res, (data) => {
       return res.json(data)
     })
+  },
+  putRestaurant (req, res) {
+    businessService.putRestaurant(req, res, (data) => {
+      return res.json(data)
+    })
   }
 }
 

@@ -29,5 +29,6 @@ router.post('/comment', authenticated, userController.postComment)
 
 router.get('/business/:id/restaurant', businessController.getRestaurant)
 router.get('/business/:id/menu', businessController.getMenu)
+router.put('/business/:id/restaurant', businessService.putRestaurant)
 
 module.exports = router
