@@ -3,7 +3,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     queryInterface.addColumn('orders', 'date', {
-      type: Sequelize.DATE,
+      type: Sequelize.STRING,
       allowNull: false,
     })
   },
