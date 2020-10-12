@@ -3,6 +3,7 @@ const router = express.Router()
 const passport = require('../config/passport')
 const restController = require('../controllers/api/restController')
 const userController = require('../controllers/api/userController')
+const businessController = require('../controllers/api/businessController')
 
 //passport middleware
 const authenticated = passport.authenticate('jwt', { session: false })
@@ -24,5 +25,7 @@ router.get('/home', restController.getRestaurants)
 router.get('/restaurant/:id', restController.getRestaurant)
 router.get('/reservation/:id', restController.getMeals)
 router.post('/comment', authenticated, userController.postComment)
+
+router.get('/business/:id/restaurant', businessController.getRestaurant)
 
 module.exports = router
