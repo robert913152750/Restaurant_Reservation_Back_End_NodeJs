@@ -7,8 +7,8 @@ const MealCategory = db.MealCategory
 const RestaurantSeat = db.RestaurantSeat
 const Order = db.Order
 const OrderItem = db.OrderItem
-
-
+const { Op } = require('sequelize')
+const moment = require('moment')
 
 let userService = {
   getUser: (req, res, callback) => {
@@ -57,20 +57,16 @@ let userService = {
     if (!req.body.info.seat || !req.body.info.time || !req.body.info.name || !req.body.info.phone || !req.body.info.date || !req.body.info.totalPrice) {
       return callback({ status: 'error', message: '所有欄位為必填' })
     }
+    const { time, name, phone, date, note, totalPrice } = req.body.info
     const seatCount = req.body.info.seat
-    const time = req.body.info.time
-    const name = req.body.info.name
-    const phone = req.body.info.phone
-    const date = req.body.info.date
-    const note = req.body.info.note
-    const totalPrice = req.body.info.totalPrice
+
 
     RestaurantSeat.findOne({
       where: { RestaurantId: req.params.id }
     }).then((seat) => {
       Order.create({
         UserId: Number(req.user.dataValues.id),
-        RestaurantSeatsId: Number(seat.dataValues.id),
+        RestaurantSeatId: Number(seat.dataValues.id),
         time: time.toString(),
         peopleCount: seatCount,
         note: note,
@@ -102,6 +98,46 @@ let userService = {
       })
     })
       .catch(err => res.send(err))
+  },
+  getOrders: (req, res, callback) => {
+    const today = moment(new Date()).format('YYYY-MM-DD')
+    if (req.query.type === 'coming') {
+      Order.findAll({
+        where: {
+          UserId: Number(req.user.dataValues.id),
+          date: {
+            [Op.gte]: [today]
+          }
+        }
+      }).then((orders) => {
+        callback({ orders: orders })
+      })
+        .catch(err => res.send(err))
+    }
+    if (req.query.type === 'history') {
+      Order.findAll({
+        where: {
+          UserId: Number(req.user.dataValues.id),
+          date: {
+            [Op.lte]: [today]
+          }
+        }
+      }).then((orders) => {
+        callback({ orders: orders })
+      })
+        .catch(err => res.send(err))
+    }
+    if (req.query.type === 'unpaid') {
+      Order.findAll({
+        where: {
+          UserId: Number(req.user.dataValues.id),
+          status: '未付款'
+        }
+      }).then((orders) => {
+        callback({ orders: orders })
+      })
+        .catch(err => res.send(err))
+    }
   }
 }
 
