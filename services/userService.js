@@ -180,7 +180,7 @@ let userService = {
             name: name,
             phone: phone,
             email: email,
-            password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null),
+            password: password ? bcrypt.hashSync(password, bcrypt.genSaltSync(10), null) : user.password,
             avatar: img.data.link
           })
         })
@@ -190,7 +190,7 @@ let userService = {
           name: name,
           phone: phone,
           email: email,
-          password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null),
+          password: password ? bcrypt.hashSync(password, bcrypt.genSaltSync(10), null) : user.password,
           avatar: user.avatar
         })
         return callback({ status: 'success', message: '會員資料更新成功' })
