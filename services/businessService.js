@@ -4,7 +4,7 @@ const Meal = db.Meal
 const MealCategory = db.MealCategory
 const mealPageLimit = 12
 const imgur = require('imgur-node-api')
-const IMGUR_CLIENT_ID = '225003753cdca23'
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const businessService = {
   async getRestaurant (req, res, callback) {

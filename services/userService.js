@@ -105,8 +105,9 @@ let userService = {
   async getOrders (req, res, callback) {
     try {
       const today = moment(new Date()).format('YYYY-MM-DD')
+      let orders = {}
       if (req.query.type === 'coming') {
-        let orders = await Order.findAll({
+        orders = await Order.findAll({
           where: {
             UserId: Number(req.user.dataValues.id),
             date: {
@@ -118,10 +119,9 @@ let userService = {
             { model: RestaurantSeat, include: { model: Restaurant } }
           ]
         })
-        return callback({ orders: orders })
       }
       if (req.query.type === 'history') {
-        let orders = await Order.findAll({
+        orders = await Order.findAll({
           where: {
             UserId: Number(req.user.dataValues.id),
             date: {
@@ -133,10 +133,9 @@ let userService = {
             { model: RestaurantSeat, include: { model: Restaurant } }
           ]
         })
-        return callback({ orders: orders })
       }
       if (req.query.type === 'unpaid') {
-        let orders = await Order.findAll({
+        orders = await Order.findAll({
           where: {
             UserId: Number(req.user.dataValues.id),
             status: '未付款'
@@ -146,8 +145,20 @@ let userService = {
             { model: RestaurantSeat, include: { model: Restaurant } }
           ]
         })
-        return callback({ orders: orders })
       }
+      const results = orders.map((item, index) => ({
+        id: item.id,
+        peopleCount: item.peopleCount,
+        time: item.name,
+        note: item.note,
+        reserve_name: item.reserve_name,
+        reserve_phone: item.reserve_phone,
+        date: item.date,
+        status: item.status,
+        OrderItems: item.OrderItems,
+        restaurantName: item.RestaurantSeat.Restaurant.name
+      }))
+      return callback({ orders: results })
     } catch (err) {
       console.log(err)
       res.send(err)
