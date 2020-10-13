@@ -2,6 +2,7 @@ const db = require('../models')
 const Restaurant = db.Restaurant
 const Meal = db.Meal
 const MealCategory = db.MealCategory
+const Category = db.Category
 const mealPageLimit = 12
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
@@ -10,7 +11,8 @@ const businessService = {
   async getRestaurant (req, res, callback) {
     try {
       const restaurant = await Restaurant.findOne({
-        where: { UserId: Number(req.user.dataValues.id) }
+        where: { UserId: Number(req.user.dataValues.id) },
+        include: { model: Category }
       })
       callback({ restaurant })
     } catch (err) {
