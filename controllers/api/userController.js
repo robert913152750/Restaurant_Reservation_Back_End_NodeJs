@@ -78,6 +78,11 @@ let userController = {
     userService.getOrders(req, res, (data) => {
       return res.json(data)
     })
+  },
+  putUser: (req, res) => {
+    userService.putUser(req, res, (data) => {
+      return res.json(data)
+    })
   }
 }
 
