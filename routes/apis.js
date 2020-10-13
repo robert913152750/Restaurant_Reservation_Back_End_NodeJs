@@ -30,11 +30,11 @@ router.get('/reservation/:id', restController.getMeals)
 router.post('/comment', authenticated, userController.postComment)
 router.post('/reservation/:id', authenticated, userController.postReservation)
 router.get('/member/:id/orders', authenticated, userController.getOrders)
-router.put('/member/edit', upload.single('image'), authenticated, userController.putUser)
+router.put('/member/edit', authenticated, upload.single('image'), userController.putUser)
 
-router.get('/business/:id/restaurant', businessController.getRestaurant)
-router.get('/business/:id/menu', businessController.getMenu)
-router.put('/business/:id/restaurant', upload.single('image'), businessService.putRestaurant)
-router.put('/business/:id/menu', upload.single('image'), businessController.putMenu)
+router.get('/business/:id/restaurant', authenticated, authenticatedBusiness, businessController.getRestaurant)
+router.get('/business/:id/menu', authenticated, authenticatedBusiness, businessController.getMenu)
+router.put('/business/:id/restaurant', authenticated, authenticatedBusiness, upload.single('image'), businessService.putRestaurant)
+router.put('/business/:id/menu', authenticated, authenticatedBusiness, upload.single('image'), businessController.putMenu)
 
 module.exports = router
