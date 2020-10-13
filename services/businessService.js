@@ -9,13 +9,10 @@ const IMGUR_CLIENT_ID = '225003753cdca23'
 const businessService = {
   async getRestaurant (req, res, callback) {
     try {
-      console.log(req.user.dataValues.id)
       const restaurant = await Restaurant.findOne({
         where: { UserId: Number(req.user.dataValues.id) }
       })
-
       callback({ restaurant })
-
     } catch (err) {
       res.send(err)
     }

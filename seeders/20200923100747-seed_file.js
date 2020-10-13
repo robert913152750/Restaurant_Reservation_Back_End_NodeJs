@@ -143,6 +143,7 @@ module.exports = {
         RestaurantId: (index % 50) + 1,
         name: faker.name.findName(),
         price: Math.floor(Math.random() * 240 + 60),
+        description: faker.lorem.sentence(),
         image: faker.image.food(),
         MealCategoryId: index + 1,
         createdAt: new Date(),
