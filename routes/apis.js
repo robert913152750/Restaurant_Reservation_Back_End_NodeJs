@@ -32,7 +32,7 @@ router.post('/reservation/:id', authenticated, userController.postReservation)
 router.get('/member/:id/orders', authenticated, userController.getOrders)
 router.put('/member/edit', authenticated, upload.single('image'), userController.putUser)
 
-router.get('/business/:id/restaurant', authenticated, authenticatedBusiness, businessController.getRestaurant)
+router.get('/business/restaurant', authenticated, authenticatedBusiness, businessController.getRestaurant)
 router.get('/business/:id/menu', authenticated, authenticatedBusiness, businessController.getMenu)
 router.put('/business/:id/restaurant', authenticated, authenticatedBusiness, upload.single('image'), businessService.putRestaurant)
 router.put('/business/:id/menu', authenticated, authenticatedBusiness, upload.single('image'), businessController.putMenu)
