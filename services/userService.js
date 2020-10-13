@@ -156,7 +156,19 @@ let userService = {
   async putUser (req, res, callback) {
     try {
       const { name, phone, email, password, password2 } = req.body
+      if (!name || !phone || !email) {
+        return callback({ status: 'error', message: 'name, phone, email為必填' })
+      }
       if (password !== password2) return callback({ status: 'error', message: '密碼與確認密碼不同' })
+
+      let emailCheck = await User.findOne({
+        where: {
+          email: email,
+          [Op.not]: { id: req.user.dataValues.id }
+        }
+      })
+      if (emailCheck) return callback({ status: 'error', message: ' 信箱重複' })
+
       const userId = req.user.dataValues.id
       const { file } = req
       let user = await User.findByPk(userId)
