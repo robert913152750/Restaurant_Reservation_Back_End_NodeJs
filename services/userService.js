@@ -102,44 +102,55 @@ let userService = {
     })
       .catch(err => res.send(err))
   },
-  getOrders: (req, res, callback) => {
-    const today = moment(new Date()).format('YYYY-MM-DD')
-    if (req.query.type === 'coming') {
-      Order.findAll({
-        where: {
-          UserId: Number(req.user.dataValues.id),
-          date: {
-            [Op.gte]: [today]
-          }
-        }
-      }).then((orders) => {
-        callback({ orders: orders })
-      })
-        .catch(err => res.send(err))
-    }
-    if (req.query.type === 'history') {
-      Order.findAll({
-        where: {
-          UserId: Number(req.user.dataValues.id),
-          date: {
-            [Op.lte]: [today]
-          }
-        }
-      }).then((orders) => {
-        callback({ orders: orders })
-      })
-        .catch(err => res.send(err))
-    }
-    if (req.query.type === 'unpaid') {
-      Order.findAll({
-        where: {
-          UserId: Number(req.user.dataValues.id),
-          status: '未付款'
-        }
-      }).then((orders) => {
-        callback({ orders: orders })
-      })
-        .catch(err => res.send(err))
+  async getOrders (req, res, callback) {
+    try {
+      const today = moment(new Date()).format('YYYY-MM-DD')
+      if (req.query.type === 'coming') {
+        let orders = await Order.findAll({
+          where: {
+            UserId: Number(req.user.dataValues.id),
+            date: {
+              [Op.gte]: [today]
+            }
+          },
+          include: [
+            { model: OrderItem },
+            { model: RestaurantSeat, include: { model: Restaurant } }
+          ]
+        })
+        return callback({ orders: orders })
+      }
+      if (req.query.type === 'history') {
+        let orders = await Order.findAll({
+          where: {
+            UserId: Number(req.user.dataValues.id),
+            date: {
+              [Op.lte]: [today]
+            }
+          },
+          include: [
+            { model: OrderItem },
+            { model: RestaurantSeat, include: { model: Restaurant } }
+          ]
+        })
+        return callback({ orders: orders })
+      }
+      if (req.query.type === 'unpaid') {
+        let orders = await Order.findAll({
+          where: {
+            UserId: Number(req.user.dataValues.id),
+            status: '未付款'
+          },
+          include: [
+            { model: OrderItem },
+            { model: RestaurantSeat, include: { model: Restaurant } }
+          ]
+        })
+        return callback({ orders: orders })
+      }
+    } catch (err) {
+      console.log(err)
+      res.send(err)
     }
   },
   async putUser (req, res, callback) {
