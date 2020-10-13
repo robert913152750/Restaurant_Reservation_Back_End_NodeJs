@@ -7,8 +7,11 @@ const MealCategory = db.MealCategory
 const RestaurantSeat = db.RestaurantSeat
 const Order = db.Order
 const OrderItem = db.OrderItem
+const bcrypt = require('bcryptjs')
 const { Op } = require('sequelize')
 const moment = require('moment')
+const imgur = require('imgur-node-api')
+const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 let userService = {
   getUser: (req, res, callback) => {
@@ -137,6 +140,41 @@ let userService = {
         callback({ orders: orders })
       })
         .catch(err => res.send(err))
+    }
+  },
+  async putUser (req, res, callback) {
+    try {
+      const { name, phone, email, password, password2 } = req.body
+      if (password !== password2) return callback({ status: 'error', message: '密碼與確認密碼不同' })
+      const userId = req.user.dataValues.id
+      const { file } = req
+      let user = await User.findByPk(userId)
+
+      if (file) {
+        imgur.setClientID(IMGUR_CLIENT_ID)
+        await imgur.upload(file.path, (err, img) => {
+          user.update({
+            name: name,
+            phone: phone,
+            email: email,
+            password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null),
+            avatar: img.data.link
+          })
+        })
+        return callback({ status: 'success', message: '會員資料更新成功' })
+      } else {
+        await user.update({
+          name: name,
+          phone: phone,
+          email: email,
+          password: bcrypt.hashSync(password, bcrypt.genSaltSync(10), null),
+          avatar: user.avatar
+        })
+        return callback({ status: 'success', message: '會員資料更新成功' })
+      }
+    } catch (err) {
+      console.log(err)
+      return callback({ status: 'error', message: '暫時無法更新，稍後在試' })
     }
   }
 }
