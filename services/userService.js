@@ -115,7 +115,7 @@ let userService = {
             }
           },
           include: [
-            { model: OrderItem },
+            { model: OrderItem, include: { model: Meal } },
             { model: RestaurantSeat, include: { model: Restaurant } }
           ]
         })
@@ -129,7 +129,7 @@ let userService = {
             }
           },
           include: [
-            { model: OrderItem },
+            { model: OrderItem, include: { model: Meal } },
             { model: RestaurantSeat, include: { model: Restaurant } }
           ]
         })
@@ -141,7 +141,7 @@ let userService = {
             status: '未付款'
           },
           include: [
-            { model: OrderItem },
+            { model: OrderItem, include: { model: Meal } },
             { model: RestaurantSeat, include: { model: Restaurant } }
           ]
         })
@@ -155,7 +155,13 @@ let userService = {
         reserve_phone: item.reserve_phone,
         date: item.date,
         status: item.status,
-        OrderItems: item.OrderItems,
+        OrderItems: item.OrderItems.map((m, _) => ({
+          id: m.id,
+          MealId: m.Meal.id,
+          name: m.Meal.name,
+          quantity: m.quantity,
+          price: m.Meal.price
+        })),
         restaurantName: item.RestaurantSeat.Restaurant.name
       }))
       return callback({ orders: results })
