@@ -216,6 +216,15 @@ let userService = {
       console.log(err)
       return callback({ status: 'error', message: '暫時無法更新，稍後在試' })
     }
+  },
+  async getUserInfo (req, res, callback) {
+    try {
+      const user = await User.findByPk(req.user.dataValues.id)
+      callback({ user: user })
+    } catch (err) {
+      console.log(err)
+      res.send(err)
+    }
   }
 }
 

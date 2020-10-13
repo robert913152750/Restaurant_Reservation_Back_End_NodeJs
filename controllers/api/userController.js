@@ -83,6 +83,11 @@ let userController = {
     userService.putUser(req, res, (data) => {
       return res.json(data)
     })
+  },
+  getUserInfo: (req, res) => {
+    userService.getUserInfo(req, res, (data) => {
+      return res.json(data)
+    })
   }
 }
 
