@@ -39,7 +39,7 @@ router.get('/member/info', authenticated, userController.getUserInfo)
 //business_user
 router.get('/business/restaurant', authenticated, authenticatedBusiness, businessController.getRestaurant)
 router.get('/business/menu', authenticated, authenticatedBusiness, businessController.getMenu)
-router.put('/business/:id/restaurant', authenticated, authenticatedBusiness, upload.single('image'), businessService.putRestaurant)
+router.put('/business/restaurant', authenticated, authenticatedBusiness, upload.single('image'), businessService.putRestaurant)
 router.put('/business/:id/menu', authenticated, authenticatedBusiness, upload.single('image'), businessController.putMenu)
 
 module.exports = router

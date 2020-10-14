@@ -21,9 +21,7 @@ const businessService = {
   },
   async getMenu (req, res, callback) {
     try {
-      // const restaurantId = req.params.id
       let offset = 0
-
       const restaurant = await Restaurant.findOne({
         where: {
           UserId: req.user.dataValues.id
@@ -31,7 +29,6 @@ const businessService = {
       })
 
       const restaurantId = restaurant.id
-
       let whereQuery = {
         RestaurantId: restaurantId
       }
@@ -74,12 +71,17 @@ const businessService = {
   async putRestaurant (req, res, callback) {
     try {
       const { name, categoryId, description, phone, address, open_time } = req.body
-      const restaurantId = req.params.id
+      const restaurant = await Restaurant.findOne({
+        where: {
+          UserId: req.user.dataValues.id
+        }
+      })
+
       if (!name || !categoryId) {
         return callback({ status: 'error', message: '請輸入餐廳名稱和類別' })
       }
       const { file } = req
-      const restaurant = await Restaurant.findByPk(restaurantId)
+      // const restaurant = await Restaurant.findByPk(restaurantId)
 
       if (file) {
         imgur.setClientID(IMGUR_CLIENT_ID)
