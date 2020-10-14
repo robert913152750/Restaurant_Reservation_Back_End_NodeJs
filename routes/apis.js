@@ -41,5 +41,6 @@ router.get('/business/restaurant', authenticated, authenticatedBusiness, busines
 router.get('/business/menu', authenticated, authenticatedBusiness, businessController.getMenu)
 router.put('/business/restaurant', authenticated, authenticatedBusiness, upload.single('image'), businessService.putRestaurant)
 router.put('/business/menu', authenticated, authenticatedBusiness, upload.single('image'), businessController.putMenu)
+router.post('/business/meal', authenticated, authenticatedBusiness, upload.single('image'), businessController.postMeal)
 
 module.exports = router

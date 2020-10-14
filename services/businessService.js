@@ -142,7 +142,12 @@ const businessService = {
   },
   async postMeal (req, res, callback) {
     try {
-      const restaurantId = req.params.id
+      const restaurant = await Restaurant.findOne({
+        where: {
+          UserId: req.user.dataValues.id
+        }
+      })
+      const restaurantId = restaurant.id
       const { file } = req
       const { name, MealCategoryId, description, price, isSale } = req.body
 
