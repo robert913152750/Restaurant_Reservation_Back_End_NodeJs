@@ -9,6 +9,8 @@ if (process.env.NODE_ENV !== 'production') {
 }
 const passport = require('./config/passport')
 
+app.use(passport.initialize())
+app.use(passport.session())
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json())
 app.use(cors())
