@@ -38,8 +38,9 @@ router.get('/member/info', authenticated, userController.getUserInfo)
 
 //business_user
 router.get('/business/restaurant', authenticated, authenticatedBusiness, businessController.getRestaurant)
-router.get('/business/:id/menu', authenticated, authenticatedBusiness, businessController.getMenu)
-router.put('/business/:id/restaurant', authenticated, authenticatedBusiness, upload.single('image'), businessService.putRestaurant)
-router.put('/business/:id/menu', authenticated, authenticatedBusiness, upload.single('image'), businessController.putMenu)
+router.get('/business/menu', authenticated, authenticatedBusiness, businessController.getMenu)
+router.put('/business/restaurant', authenticated, authenticatedBusiness, upload.single('image'), businessService.putRestaurant)
+router.put('/business/menu', authenticated, authenticatedBusiness, upload.single('image'), businessController.putMenu)
+router.post('/business/meal', authenticated, authenticatedBusiness, upload.single('image'), businessController.postMeal)
 
 module.exports = router

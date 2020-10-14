@@ -12,13 +12,17 @@ const businessController = {
     })
   },
   putRestaurant (req, res) {
-    console.log('hehehehehe',data)
     businessService.putRestaurant(req, res, (data) => {
       return res.json(data)
     })
   },
   putMenu (req, res) {
     businessService.putMenu(req, res, (data) => {
+      return res.json(data)
+    })
+  },
+  postMeal (req, res) {
+    businessService.postMeal(req, res, (data) => {
       return res.json(data)
     })
   }
