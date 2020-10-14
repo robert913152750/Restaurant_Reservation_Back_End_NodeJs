@@ -2,13 +2,13 @@
 
 module.exports = {
   up: async (queryInterface, Sequelize) => {
-    queryInterface.addColumn('orders', 'status', {
+    queryInterface.addColumn('Orders', 'status', {
       type: Sequelize.STRING,
       defaultValue: '未付款'
     })
   },
 
   down: async (queryInterface, Sequelize) => {
-    queryInterface.removeColumn('orders', 'status')
+    queryInterface.removeColumn('Orders', 'status')
   }
 };
