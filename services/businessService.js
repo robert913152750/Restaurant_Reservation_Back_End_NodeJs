@@ -21,8 +21,17 @@ const businessService = {
   },
   async getMenu (req, res, callback) {
     try {
-      const restaurantId = req.params.id
+      // const restaurantId = req.params.id
       let offset = 0
+
+      const restaurant = await Restaurant.findOne({
+        where: {
+          UserId: req.user.dataValues.id
+        }
+      })
+
+      const restaurantId = restaurant.id
+
       let whereQuery = {
         RestaurantId: restaurantId
       }
