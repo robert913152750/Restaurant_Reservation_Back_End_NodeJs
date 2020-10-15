@@ -7,6 +7,11 @@ const orderController = {
       return json(data)
     }))
   },
+  cancelOrder: (req, res) => {
+    orderService.cancelOrder((req, res, (data) => {
+      return json(data)
+    }))
+  },
   getPayment: (req, res) => {
     orderService.getPayment((req, res, (data) => {
       return json(data)

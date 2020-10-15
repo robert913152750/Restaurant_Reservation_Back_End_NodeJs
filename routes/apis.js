@@ -38,6 +38,7 @@ router.get('/member/info', authenticated, userController.getUserInfo)
 
 //orders
 router.post('/order/:id', authenticated, orderController.postOrder)
+router.put('/order/:id/cancel', authenticated, orderController.cancelOrder)
 router.get('/order/:id/payment', authenticated, orderService.getPayment)
 
 //business_user
