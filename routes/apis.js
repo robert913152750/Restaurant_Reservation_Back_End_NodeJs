@@ -40,6 +40,7 @@ router.get('/member/info', authenticated, userController.getUserInfo)
 router.post('/order/:id', authenticated, orderController.postOrder)
 router.put('/order/:id/cancel', authenticated, orderController.cancelOrder)
 router.get('/order/:id/payment', authenticated, orderService.getPayment)
+router.post('/spgateway/callback', authenticated, orderController.spgatewayCallback)
 
 //business_user
 router.get('/business/restaurant', authenticated, authenticatedBusiness, businessController.getRestaurant)
