@@ -10,6 +10,8 @@ const OrderItem = db.OrderItem
 const bcrypt = require('bcryptjs')
 const { Op } = require('sequelize')
 const moment = require('moment')
+const { getOrders } = require('./userService')
+const { getPayment } = require('../controllers/api/orderController')
 
 
 const orderService = {
@@ -58,6 +60,10 @@ const orderService = {
     })
       .catch(err => res.send(err))
   },
+  async getPayment (req, res, callback) {
+    const order = await Order.findByPk(req.params.id)
+    return callback({ payment: order })
+  }
 }
 
 module.exports = orderService

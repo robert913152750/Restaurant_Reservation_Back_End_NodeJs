@@ -6,6 +6,7 @@ const userController = require('../controllers/api/userController')
 const businessController = require('../controllers/api/businessController')
 const orderController = require('../controllers/api/orderController')
 const multer = require('multer')
+const orderService = require('../services/orderService')
 const upload = multer({ dest: 'temp/' })
 
 //passport middleware
@@ -37,6 +38,7 @@ router.get('/member/info', authenticated, userController.getUserInfo)
 
 //orders
 router.post('/order/:id', authenticated, orderController.postOrder)
+router.get('/order/:id/payment', authenticated, orderService.getPayment)
 
 //business_user
 router.get('/business/restaurant', authenticated, authenticatedBusiness, businessController.getRestaurant)

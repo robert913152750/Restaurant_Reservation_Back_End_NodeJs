@@ -6,6 +6,11 @@ const orderController = {
     orderService.postOrder((req, res, (data) => {
       return json(data)
     }))
+  },
+  getPayment: (req, res) => {
+    orderService.getPayment((req, res, (data) => {
+      return json(data)
+    }))
   }
 }
 
