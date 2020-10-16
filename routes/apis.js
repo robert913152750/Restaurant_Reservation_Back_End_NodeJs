@@ -28,11 +28,11 @@ router.post('/signin', userController.signIn)
 router.get('/get_current_user', authenticated, userController.getUser)
 router.get('/home', restController.getRestaurants)
 router.get('/restaurant/:id', restController.getRestaurant)
-router.get('/restaurant/:id/meals', restController.getMeals)
+router.get('/restaurant/:id/reservation', restController.getMeals)
 
 //common_user
 router.post('/comment', authenticated, userController.postComment)
-router.get('/member/:id/orders', authenticated, userController.getOrders)
+router.get('/member/orders', authenticated, userController.getOrders)
 router.put('/member/edit', authenticated, upload.single('image'), userController.putUser)
 router.get('/member/info', authenticated, userController.getUserInfo)
 

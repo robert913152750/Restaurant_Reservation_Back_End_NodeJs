@@ -64,6 +64,7 @@ const businessService = {
         meals,
         mealCategory,
         totalPage,
+        page,
         prev,
         next
       })

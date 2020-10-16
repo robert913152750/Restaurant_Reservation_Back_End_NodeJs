@@ -40,12 +40,12 @@ const restService = {
       offset: offset,
       limit: pageLimit
     }).then(restaurants => {
-      let page = Number(req.query.page) || 1
-      let pages = Math.ceil(restaurants.count / pageLimit)
-      let totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
+      const page = Number(req.query.page) || 1
+      const pages = Math.ceil(restaurants.count / pageLimit)
+      const totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
 
-      let prev = page - 1 < 1 ? 1 : page - 1
-      let next = page + 1 > pages ? pages : page + 1
+      const prev = page - 1 < 1 ? 1 : page - 1
+      const next = page + 1 > pages ? pages : page + 1
 
 
       const data = restaurants.rows.map(r => ({
@@ -130,6 +130,7 @@ const restService = {
         return callback({
           meals: data,
           mealCategory: categories,
+          page: page,
           totalPage: totalPage,
           prev: prev,
           next: next
@@ -138,15 +139,7 @@ const restService = {
     })
       .catch(err => res.send(err))
 
-
   }
-
-
-
-
-
-
-
 }
 
 module.exports = restService

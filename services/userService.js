@@ -7,6 +7,7 @@ const MealCategory = db.MealCategory
 const RestaurantSeat = db.RestaurantSeat
 const Order = db.Order
 const OrderItem = db.OrderItem
+const ordersPageLimit = 10
 const bcrypt = require('bcryptjs')
 const { Op } = require('sequelize')
 const moment = require('moment')
@@ -58,8 +59,14 @@ const userService = {
   },
   async getOrders (req, res, callback) {
     try {
+      let offset = 0
       const today = moment(new Date()).format('YYYY-MM-DD')
       let orders = {}
+
+      if (req.query.page) {
+        offset = (req.query.page - 1) * ordersPageLimit
+      }
+
       if (req.query.type === 'coming') {
         orders = await Order.findAll({
           where: {
@@ -71,7 +78,9 @@ const userService = {
           include: [
             { model: OrderItem, include: { model: Meal } },
             { model: RestaurantSeat, include: { model: Restaurant } }
-          ]
+          ],
+          offset: offset,
+          limit: ordersPageLimit
         })
       }
       if (req.query.type === 'history') {
@@ -85,7 +94,9 @@ const userService = {
           include: [
             { model: OrderItem, include: { model: Meal } },
             { model: RestaurantSeat, include: { model: Restaurant } }
-          ]
+          ],
+          offset: offset,
+          limit: ordersPageLimit
         })
       }
       if (req.query.type === 'unpaid') {
@@ -97,9 +108,19 @@ const userService = {
           include: [
             { model: OrderItem, include: { model: Meal } },
             { model: RestaurantSeat, include: { model: Restaurant } }
-          ]
+          ],
+          offset: offset,
+          limit: ordersPageLimit
         })
       }
+      const ordersCount = orders.length
+      const page = Number(req.query.page) || 1
+      const pages = Math.ceil(ordersCount / ordersPageLimit)
+      const totalPages = Array.from({ length: pages }).map((_, index) => index + 1)
+
+      const prev = page - 1 < 1 ? 1 : page - 1
+      const next = page + 1 > pages ? pages : page + 1
+
       const results = orders.map((item, index) => ({
         id: item.id,
         peopleCount: item.peopleCount,
@@ -118,7 +139,13 @@ const userService = {
         })),
         restaurantName: item.RestaurantSeat.Restaurant.name
       }))
-      return callback({ orders: results })
+      return callback({
+        orders: results,
+        page: page,
+        totalPages: totalPages,
+        prev: prev,
+        next: next
+      })
     } catch (err) {
       console.log(err)
       res.send(err)
