@@ -3,8 +3,10 @@ const Restaurant = db.Restaurant
 const Meal = db.Meal
 const MealCategory = db.MealCategory
 const Category = db.Category
+const User = db.User
 const mealPageLimit = 12
 const imgur = require('imgur-node-api')
+const { patchIsSale } = require('../controllers/api/businessController')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const businessService = {
@@ -176,6 +178,31 @@ const businessService = {
       }
     } catch (err) {
       callback({ status: 'error', message: '新增餐點失敗，請稍後再試' })
+    }
+  },
+  async patchIsSale (req, res, callback) {
+    try {
+      const user = await User.findByPk(req.user.dataValues.id, {
+        include: { model: Restaurant }
+      })
+      const RestaurantId = user.Restaurants[0].id
+      const meal = await Meal.findByPk(req.params.id)
+      const mealRestaurantId = meal.RestaurantId
+      if (RestaurantId != mealRestaurantId) return callback({ status: 'error', message: '權限不符' })
+
+      const isSaleStatus = req.query.isSale
+      meal.update({
+        isSale: isSaleStatus
+      })
+      return callback({
+        meal,
+        status: 'success',
+        message: '更改狀態成功'
+      })
+
+    } catch (err) {
+      console.log(err)
+      return callback({ status: 'error', message: '更改狀態失敗' })
     }
   }
 }

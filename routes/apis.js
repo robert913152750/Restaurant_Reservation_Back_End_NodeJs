@@ -48,5 +48,6 @@ router.get('/business/menu', authenticated, authenticatedBusiness, businessContr
 router.put('/business/restaurant', authenticated, authenticatedBusiness, upload.single('image'), businessController.putRestaurant)
 router.put('/business/menu', authenticated, authenticatedBusiness, upload.single('image'), businessController.putMenu)
 router.post('/business/meal', authenticated, authenticatedBusiness, upload.single('image'), businessController.postMeal)
+router.patch('/business/isSale/:id', authenticated, authenticatedBusiness, businessController.patchIsSale)
 
 module.exports = router

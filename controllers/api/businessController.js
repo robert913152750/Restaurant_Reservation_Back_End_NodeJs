@@ -25,6 +25,11 @@ const businessController = {
     businessService.postMeal(req, res, (data) => {
       return res.json(data)
     })
+  },
+  patchIsSale (req, res) {
+    businessService.patchIsSale(req, res, (data) => {
+      return res.json(data)
+    })
   }
 }
 
