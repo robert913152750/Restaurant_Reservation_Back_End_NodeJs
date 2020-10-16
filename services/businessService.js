@@ -3,6 +3,7 @@ const Restaurant = db.Restaurant
 const Meal = db.Meal
 const MealCategory = db.MealCategory
 const Category = db.Category
+const User = db.User
 const mealPageLimit = 12
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
@@ -14,7 +15,8 @@ const businessService = {
         where: { UserId: Number(req.user.dataValues.id) },
         include: { model: Category }
       })
-      callback({ restaurant })
+      const category = await Category.findAll()
+      callback({ restaurant, category })
     } catch (err) {
       res.send(err)
     }
@@ -38,7 +40,7 @@ const businessService = {
         offset = (req.query.page - 1) * mealPageLimit
       }
       if (req.query.MealCategoryId) {
-        MealCategoryId = req.query.MealCategoryId
+        MealCategoryId = Number(req.query.MealCategoryId)
         whereQuery['MealCategoryId'] = MealCategoryId
       }
       const meals = await Meal.findAll({
@@ -50,17 +52,19 @@ const businessService = {
         where: { RestaurantId: restaurantId }
       })
 
-      let page = Number(req.query.page) || 1
-      let pages = Math.ceil(meals.count / mealPageLimit)
-      let totalPage = Array.from({ length: pages }).map((_, index) => index + 1)
+      const mealsCount = meals.length
+      const page = Number(req.query.page) || 1
+      const pages = Math.ceil(mealsCount / mealPageLimit)
+      const totalPage = Array.from({ length: pages }).map((_, index) => index + 1)
 
-      let prev = page - 1 < 1 ? 1 : page - 1
-      let next = page + 1 > pages ? page : page + 1
+      const prev = page - 1 < 1 ? 1 : page - 1
+      const next = page + 1 > pages ? page : page + 1
 
       return callback({
         meals,
         mealCategory,
         totalPage,
+        page,
         prev,
         next
       })
@@ -81,12 +85,11 @@ const businessService = {
         return callback({ status: 'error', message: '請輸入餐廳名稱和類別' })
       }
       const { file } = req
-      // const restaurant = await Restaurant.findByPk(restaurantId)
 
       if (file) {
         imgur.setClientID(IMGUR_CLIENT_ID)
         imgur.upload(file.path, (err, img) => {
-          return restaurant.update({
+          restaurant.update({
             name, phone, description, address, open_time,
             CategoryId: categoryId,
             image: img.data.link
@@ -95,7 +98,7 @@ const businessService = {
           })
         })
       } else {
-        return restaurant.update({
+        restaurant.update({
           name, phone, description, address, open_time,
           CategoryId: categoryId,
           image: restaurant.image
@@ -111,7 +114,7 @@ const businessService = {
   async putMenu (req, res, callback) {
     try {
       const { MealId, name, MealCategoryId, description, price, isSale } = req.body
-
+      if (isSale === null) return isSale = false
       if (!name || !MealCategoryId || !price) {
         return callback({ status: 'error', message: '名稱、類別、價格為必填' })
       }
@@ -176,6 +179,31 @@ const businessService = {
       }
     } catch (err) {
       callback({ status: 'error', message: '新增餐點失敗，請稍後再試' })
+    }
+  },
+  async patchIsSale (req, res, callback) {
+    try {
+      const user = await User.findByPk(req.user.dataValues.id, {
+        include: { model: Restaurant }
+      })
+      const RestaurantId = user.Restaurants[0].id
+      const meal = await Meal.findByPk(req.params.id)
+      const mealRestaurantId = meal.RestaurantId
+      if (RestaurantId != mealRestaurantId) return callback({ status: 'error', message: '權限不符' })
+
+      const isSaleStatus = req.query.isSale
+      meal.update({
+        isSale: isSaleStatus
+      })
+      return callback({
+        meal,
+        status: 'success',
+        message: '更改狀態成功'
+      })
+
+    } catch (err) {
+      console.log(err)
+      return callback({ status: 'error', message: '更改狀態失敗' })
     }
   }
 }

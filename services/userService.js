@@ -7,13 +7,14 @@ const MealCategory = db.MealCategory
 const RestaurantSeat = db.RestaurantSeat
 const Order = db.Order
 const OrderItem = db.OrderItem
+const ordersPageLimit = 10
 const bcrypt = require('bcryptjs')
 const { Op } = require('sequelize')
 const moment = require('moment')
 const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
-let userService = {
+const userService = {
   getUser: (req, res, callback) => {
     return User.findByPk(req.user.dataValues.id, {
       include: [
@@ -56,56 +57,16 @@ let userService = {
     })
       .catch(err => res.send(err))
   },
-  postReservation: (req, res, callback) => {
-    if (!req.body.info.seat || !req.body.info.time || !req.body.info.name || !req.body.info.phone || !req.body.info.date || !req.body.info.totalPrice) {
-      return callback({ status: 'error', message: '所有欄位為必填' })
-    }
-    const { time, name, phone, date, note, totalPrice } = req.body.info
-    const seatCount = req.body.info.seat
-
-
-    RestaurantSeat.findOne({
-      where: { RestaurantId: req.params.id }
-    }).then((seat) => {
-      Order.create({
-        UserId: Number(req.user.dataValues.id),
-        RestaurantSeatId: Number(seat.dataValues.id),
-        time: time.toString(),
-        peopleCount: seatCount,
-        note: note,
-        reserve_name: name,
-        reserve_phone: phone,
-        date: date.toString(),
-        totalPrice: Number(totalPrice)
-      }).then((order) => {
-        let meals = req.body.orders
-        OrderItem.bulkCreate(
-          Array.from({ length: meals.length }).map((_, index) => ({
-            MealId: Number(meals[index].id),
-            OrderId: Number(order.dataValues.id),
-            quantity: Number(meals[index].quantity)
-          }))
-        ).then((bulk) => {
-          let restSeat = seat.seat - order.peopleCount
-          seat.update({
-            seat: restSeat
-          }).then(() => {
-            return callback({
-              status: 'success',
-              message: '訂位&訂餐成功',
-              order: order
-            })
-          })
-        })
-
-      })
-    })
-      .catch(err => res.send(err))
-  },
   async getOrders (req, res, callback) {
     try {
+      let offset = 0
       const today = moment(new Date()).format('YYYY-MM-DD')
       let orders = {}
+
+      if (req.query.page) {
+        offset = (req.query.page - 1) * ordersPageLimit
+      }
+
       if (req.query.type === 'coming') {
         orders = await Order.findAll({
           where: {
@@ -117,7 +78,9 @@ let userService = {
           include: [
             { model: OrderItem, include: { model: Meal } },
             { model: RestaurantSeat, include: { model: Restaurant } }
-          ]
+          ],
+          offset: offset,
+          limit: ordersPageLimit
         })
       }
       if (req.query.type === 'history') {
@@ -131,7 +94,9 @@ let userService = {
           include: [
             { model: OrderItem, include: { model: Meal } },
             { model: RestaurantSeat, include: { model: Restaurant } }
-          ]
+          ],
+          offset: offset,
+          limit: ordersPageLimit
         })
       }
       if (req.query.type === 'unpaid') {
@@ -143,9 +108,19 @@ let userService = {
           include: [
             { model: OrderItem, include: { model: Meal } },
             { model: RestaurantSeat, include: { model: Restaurant } }
-          ]
+          ],
+          offset: offset,
+          limit: ordersPageLimit
         })
       }
+      const ordersCount = orders.length
+      const page = Number(req.query.page) || 1
+      const pages = Math.ceil(ordersCount / ordersPageLimit)
+      const totalPages = Array.from({ length: pages }).map((_, index) => index + 1)
+
+      const prev = page - 1 < 1 ? 1 : page - 1
+      const next = page + 1 > pages ? pages : page + 1
+
       const results = orders.map((item, index) => ({
         id: item.id,
         peopleCount: item.peopleCount,
@@ -164,7 +139,13 @@ let userService = {
         })),
         restaurantName: item.RestaurantSeat.Restaurant.name
       }))
-      return callback({ orders: results })
+      return callback({
+        orders: results,
+        page: page,
+        totalPages: totalPages,
+        prev: prev,
+        next: next
+      })
     } catch (err) {
       console.log(err)
       res.send(err)
@@ -172,11 +153,11 @@ let userService = {
   },
   async putUser (req, res, callback) {
     try {
-      const { name, phone, email, password, password2 } = req.body
+      const { name, phone, email, password, checkPassword } = req.body
       if (!name || !phone || !email) {
         return callback({ status: 'error', message: 'name, phone, email為必填' })
       }
-      if (password !== password2) return callback({ status: 'error', message: '密碼與確認密碼不同' })
+      if (password !== checkPassword) return callback({ status: 'error', message: '密碼與確認密碼不同' })
 
       let emailCheck = await User.findOne({
         where: {

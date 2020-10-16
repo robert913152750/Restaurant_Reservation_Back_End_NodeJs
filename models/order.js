@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
       Order.belongsTo(models.User)
       Order.belongsTo(models.RestaurantSeat)
       Order.hasMany(models.OrderItem)
+      Order.hasMany(models.Payment)
     }
   };
   Order.init({
