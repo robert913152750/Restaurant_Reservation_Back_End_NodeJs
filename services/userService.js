@@ -126,11 +126,11 @@ const userService = {
   },
   async putUser (req, res, callback) {
     try {
-      const { name, phone, email, password, password2 } = req.body
+      const { name, phone, email, password, checkPassword } = req.body
       if (!name || !phone || !email) {
         return callback({ status: 'error', message: 'name, phone, email為必填' })
       }
-      if (password !== password2) return callback({ status: 'error', message: '密碼與確認密碼不同' })
+      if (password !== checkPassword) return callback({ status: 'error', message: '密碼與確認密碼不同' })
 
       let emailCheck = await User.findOne({
         where: {

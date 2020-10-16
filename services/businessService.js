@@ -84,7 +84,6 @@ const businessService = {
         return callback({ status: 'error', message: '請輸入餐廳名稱和類別' })
       }
       const { file } = req
-      // const restaurant = await Restaurant.findByPk(restaurantId)
 
       if (file) {
         imgur.setClientID(IMGUR_CLIENT_ID)
