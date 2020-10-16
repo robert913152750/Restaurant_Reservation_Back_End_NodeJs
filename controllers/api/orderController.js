@@ -1,4 +1,3 @@
-const { json } = require('sequelize/types')
 const orderService = require('../../services/orderService')
 
 const orderController = {

@@ -22,7 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     params: DataTypes.TEXT
   }, {
     sequelize,
-    modelName: 'payment',
+    modelName: 'Payment',
   });
   return payment;
 };

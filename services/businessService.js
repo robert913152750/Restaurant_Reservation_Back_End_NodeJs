@@ -38,7 +38,7 @@ const businessService = {
         offset = (req.query.page - 1) * mealPageLimit
       }
       if (req.query.MealCategoryId) {
-        MealCategoryId = req.query.MealCategoryId
+        MealCategoryId = Number(req.query.MealCategoryId)
         whereQuery['MealCategoryId'] = MealCategoryId
       }
       const meals = await Meal.findAll({
@@ -56,6 +56,8 @@ const businessService = {
 
       let prev = page - 1 < 1 ? 1 : page - 1
       let next = page + 1 > pages ? page : page + 1
+      console.log(whereQuery)
+      console.log(meals)
 
       return callback({
         meals,
