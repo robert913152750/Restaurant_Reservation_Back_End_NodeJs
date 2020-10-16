@@ -53,12 +53,13 @@ const businessService = {
         where: { RestaurantId: restaurantId }
       })
 
-      let page = Number(req.query.page) || 1
-      let pages = Math.ceil(meals.count / mealPageLimit)
-      let totalPage = Array.from({ length: pages }).map((_, index) => index + 1)
+      const mealsCount = meals.length
+      const page = Number(req.query.page) || 1
+      const pages = Math.ceil(mealsCount / mealPageLimit)
+      const totalPage = Array.from({ length: pages }).map((_, index) => index + 1)
 
-      let prev = page - 1 < 1 ? 1 : page - 1
-      let next = page + 1 > pages ? page : page + 1
+      const prev = page - 1 < 1 ? 1 : page - 1
+      const next = page + 1 > pages ? page : page + 1
 
       return callback({
         meals,
