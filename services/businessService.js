@@ -6,7 +6,6 @@ const Category = db.Category
 const User = db.User
 const mealPageLimit = 12
 const imgur = require('imgur-node-api')
-const { patchIsSale } = require('../controllers/api/businessController')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const businessService = {
@@ -90,7 +89,7 @@ const businessService = {
       if (file) {
         imgur.setClientID(IMGUR_CLIENT_ID)
         imgur.upload(file.path, (err, img) => {
-          return restaurant.update({
+          restaurant.update({
             name, phone, description, address, open_time,
             CategoryId: categoryId,
             image: img.data.link
@@ -99,7 +98,7 @@ const businessService = {
           })
         })
       } else {
-        return restaurant.update({
+        restaurant.update({
           name, phone, description, address, open_time,
           CategoryId: categoryId,
           image: restaurant.image
