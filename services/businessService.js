@@ -177,16 +177,6 @@ const businessService = {
     } catch (err) {
       callback({ status: 'error', message: '新增餐點失敗，請稍後再試' })
     }
-  },
-  async spgatewayCallback (req, res, callback) {
-    console.log('===== spgatewayCallback =====')
-    console.log(req.body)
-    console.log('==========')
-
-    callback({
-      status: 'success',
-      message: '交易成功'
-    })
   }
 }
 

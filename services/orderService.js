@@ -7,11 +7,11 @@ const MealCategory = db.MealCategory
 const RestaurantSeat = db.RestaurantSeat
 const Order = db.Order
 const OrderItem = db.OrderItem
+const Payment = db.Payment
 const bcrypt = require('bcryptjs')
 const { Op } = require('sequelize')
 const moment = require('moment')
-const { getOrders } = require('./userService')
-const { getPayment } = require('../controllers/api/orderController')
+const payment = require('../config/payment')
 
 
 const orderService = {
@@ -74,7 +74,25 @@ const orderService = {
   },
   async getPayment (req, res, callback) {
     const order = await Order.findByPk(req.params.id)
-    return callback({ payment: order })
+    const user = await User.findByPk(req.user.dataValues.id)
+    const userEmail = user.email
+    console.log('=========')
+    const tradeInfo = payment.getTradeInfo(order.totalPrice, '餐廳訂單', userEmail)
+    return callback({ payment: { order, tradeInfo } })
+  },
+  async spgatewayCallback (req, res, callback) {
+    console.log('===== spgatewayCallback =====')
+    console.log(req.body)
+    console.log('==========')
+    const data = JSON.parse(payment.create_mpg_aes_decrypt(req.body.TradeInfo))
+    console.log(data)
+
+
+
+    callback({
+      status: 'success',
+      message: '交易成功'
+    })
   }
 }
 
