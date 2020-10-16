@@ -56,8 +56,6 @@ const businessService = {
 
       let prev = page - 1 < 1 ? 1 : page - 1
       let next = page + 1 > pages ? page : page + 1
-      console.log(whereQuery)
-      console.log(meals)
 
       return callback({
         meals,
@@ -113,7 +111,7 @@ const businessService = {
   async putMenu (req, res, callback) {
     try {
       const { MealId, name, MealCategoryId, description, price, isSale } = req.body
-
+      if (isSale === 'null') return isSale = false
       if (!name || !MealCategoryId || !price) {
         return callback({ status: 'error', message: '名稱、類別、價格為必填' })
       }
