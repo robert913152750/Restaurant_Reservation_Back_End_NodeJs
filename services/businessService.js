@@ -16,7 +16,8 @@ const businessService = {
         where: { UserId: Number(req.user.dataValues.id) },
         include: { model: Category }
       })
-      callback({ restaurant })
+      const category = await Category.findAll()
+      callback({ restaurant, category })
     } catch (err) {
       res.send(err)
     }
