@@ -17,11 +17,12 @@ const payment = require('../config/payment')
 const orderService = {
   async postOrder (req, res, callback) {
     try {
-      if (!req.body.info.seat || !req.body.info.time || !req.body.info.name || !req.body.info.phone || !req.body.info.date || !req.body.totalPrice) {
+      if (!req.body.info.seat || !req.body.info.time || !req.body.info.name || !req.body.info.phone || !req.body.info.date || !req.body.totalPrice || !req.body.MerchantOrderNo) {
         return callback({ status: 'error', message: '所有欄位為必填' })
       }
       const { time, name, phone, date, note } = req.body.info
       const totalPrice = req.body.totalPrice
+      const MerchantOrderNo = req.body.MerchantOrderNo
       const seatCount = req.body.info.seat
 
       RestaurantSeat.findOne({
@@ -36,7 +37,8 @@ const orderService = {
           reserve_name: name,
           reserve_phone: phone,
           date: date.toString(),
-          totalPrice: Number(totalPrice)
+          totalPrice: Number(totalPrice),
+          MerchantOrderNo: MerchantOrderNo
         }).then((order) => {
           let meals = req.body.orders
           OrderItem.bulkCreate(
@@ -92,6 +94,15 @@ const orderService = {
       console.log('==========')
       const data = JSON.parse(payment.create_mpg_aes_decrypt(req.body.TradeInfo))
       console.log(data)
+      const order = await Order.findOne({
+        where: {
+          MerchantOrderNo: data.Result.MerchantOrderNo
+        }
+      })
+
+      order.update({
+        status: '已付款'
+      })
 
       return res.redirect('https://marcho001.github.io/reservations-front-end-vue/#/member/orders')
 
