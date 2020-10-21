@@ -191,7 +191,7 @@ const businessService = {
       const mealRestaurantId = meal.RestaurantId
       if (RestaurantId != mealRestaurantId) return callback({ status: 'error', message: '權限不符' })
 
-      const isSaleStatus = req.query.isSale
+      const isSaleStatus = req.body.isSale
       meal.update({
         isSale: isSaleStatus
       })
