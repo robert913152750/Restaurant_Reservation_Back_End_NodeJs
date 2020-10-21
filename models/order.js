@@ -26,7 +26,8 @@ module.exports = (sequelize, DataTypes) => {
     reserve_phone: DataTypes.STRING,
     date: DataTypes.STRING,
     status: DataTypes.STRING,
-    totalPrice: DataTypes.INTEGER
+    totalPrice: DataTypes.INTEGER,
+    MerchantOrderNo: DataTypes.INTEGER
   }, {
     sequelize,
     modelName: 'Order',
