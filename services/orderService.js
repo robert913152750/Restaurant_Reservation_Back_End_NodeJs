@@ -87,12 +87,18 @@ const orderService = {
     const data = JSON.parse(payment.create_mpg_aes_decrypt(req.body.TradeInfo))
     console.log(data)
 
+    if (req.query.from === 'ReturnURL') {
+      //在這裡更新資料庫
+      // ======
+
+      callback({
+        status: 'success',
+        message: '交易成功'
+      })
+    }
 
 
-    callback({
-      status: 'success',
-      message: '交易成功'
-    })
+
   }
 }
 

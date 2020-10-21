@@ -82,6 +82,7 @@ const userService = {
           offset: offset,
           limit: ordersPageLimit
         })
+        console.log(orders)
       }
       if (req.query.type === 'history') {
         orders = await Order.findAll({
