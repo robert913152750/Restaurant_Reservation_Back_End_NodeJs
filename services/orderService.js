@@ -16,10 +16,11 @@ const payment = require('../config/payment')
 
 const orderService = {
   async postOrder (req, res, callback) {
-    if (!req.body.info.seat || !req.body.info.time || !req.body.info.name || !req.body.info.phone || !req.body.info.date || !req.body.info.totalPrice) {
+    if (!req.body.info.seat || !req.body.info.time || !req.body.info.name || !req.body.info.phone || !req.body.info.date || !req.body.totalPrice) {
       return callback({ status: 'error', message: '所有欄位為必填' })
     }
-    const { time, name, phone, date, note, totalPrice } = req.body.info
+    const { time, name, phone, date, note } = req.body.info
+    const totalPrice = req.body.totalPrice
     const seatCount = req.body.info.seat
 
     RestaurantSeat.findOne({
@@ -80,8 +81,8 @@ const orderService = {
     const tradeInfo = payment.getTradeInfo(order.totalPrice, '餐廳訂單', userEmail)
     return callback({ payment: { order, tradeInfo } })
   },
-  async spgatewayCallback (req, res, callback) {
-    console.log('===== spgatewayCallback =====')
+  async newebpayCallback (req, res, callback) {
+    console.log('===== newebpayCallback =====')
     console.log(req.body)
     console.log('==========')
     const data = JSON.parse(payment.create_mpg_aes_decrypt(req.body.TradeInfo))
