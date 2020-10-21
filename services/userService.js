@@ -82,6 +82,7 @@ const userService = {
           offset: offset,
           limit: ordersPageLimit
         })
+        console.log(orders)
       }
       if (req.query.type === 'history') {
         orders = await Order.findAll({
@@ -124,12 +125,13 @@ const userService = {
       const results = orders.map((item, index) => ({
         id: item.id,
         peopleCount: item.peopleCount,
-        time: item.name,
+        time: item.time,
         note: item.note,
         reserve_name: item.reserve_name,
         reserve_phone: item.reserve_phone,
         date: item.date,
         status: item.status,
+        totalPrice: item.totalPrice,
         OrderItems: item.OrderItems.map((m, _) => ({
           id: m.id,
           MealId: m.Meal.id,

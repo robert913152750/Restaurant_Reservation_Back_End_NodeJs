@@ -3,9 +3,9 @@ const URL = ''
 const MerchantID = 'MS315846711'
 const HashKey = 'kFb6sccqjmALimU18pVkEslFTk3W1AEe'
 const HashIV = 'Cz2NkRd0JxE7uVbP'
-const PayGateWay = "https://ccore.spgateway.com/MPG/mpg_gateway"
-const ReturnURL = URL + "/spgateway/callback?from=ReturnURL"
-const NotifyURL = URL + "/spgateway/callback?from=NotifyURL"
+const PayGateWay = "https://ccore.newebpay.com/MPG/mpg_gateway"
+const ReturnURL = URL + "/newebpay/callback?from=ReturnURL"
+const NotifyURL = URL + "/newebpay/callback?from=NotifyURL"
 const ClientBackURL = URL + "/orders"
 
 module.exports = {
