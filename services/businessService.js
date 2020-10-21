@@ -43,16 +43,17 @@ const businessService = {
         MealCategoryId = Number(req.query.MealCategoryId)
         whereQuery['MealCategoryId'] = MealCategoryId
       }
-      const meals = await Meal.findAll({
+      const meals = await Meal.findAndCountAll({
         where: whereQuery,
         limit: mealPageLimit,
         offset: offset
       })
+      console.log(meals)
       const mealCategory = await MealCategory.findAll({
         where: { RestaurantId: restaurantId }
       })
 
-      const mealsCount = meals.length
+      const mealsCount = meals.count
       const page = Number(req.query.page) || 1
       const pages = Math.ceil(mealsCount / mealPageLimit)
       const totalPage = Array.from({ length: pages }).map((_, index) => index + 1)
