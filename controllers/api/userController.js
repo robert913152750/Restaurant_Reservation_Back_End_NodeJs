@@ -2,6 +2,7 @@ const userService = require('../../services/userService')
 const bcrypt = require('bcryptjs')
 const db = require('../../models')
 const User = db.User
+const Restaurant = db.Restaurant
 
 //JWT
 const jwt = require('jsonwebtoken')
@@ -27,16 +28,20 @@ let userController = {
     })
 
   },
-  signIn: (req, res) => {
-    //檢查是否為空值
-    if (!req.body.email || !req.body.password) {
-      return res.json({ status: 'error', message: 'required field didn\'t exist' })
-    }
-    // 檢查user與密碼是否正確
-    let username = req.body.email
-    let password = req.body.password
+  async signIn (req, res) {
+    try {
+      //檢查是否為空值
+      if (!req.body.email || !req.body.password) {
+        return res.json({ status: 'error', message: 'required field didn\'t exist' })
+      }
+      // 檢查user與密碼是否正確
+      let username = req.body.email
+      let password = req.body.password
 
-    User.findOne({ where: { email: username } }).then(user => {
+      const user = await User.findOne({
+        where: { email: username },
+        include: { model: Restaurant }
+      })
       if (!user) return res.status(401).json({ status: 'error', message: 'user is not found' })
 
       if (!bcrypt.compareSync(password, user.password)) {
@@ -46,13 +51,21 @@ let userController = {
       let payload = { id: user.id }
       let token = jwt.sign(payload, process.env.JWT_SECRET)
 
+      const result = {
+        ...user.dataValues,
+        RestaurantId: user.Restaurants[0] ? user.Restaurants[0].id : 'null'
+      }
       return res.json({
         status: 'success',
         message: 'ok',
         token: token,
-        user: user
+        user: result,
       })
-    })
+
+    } catch (err) {
+      console.log(err)
+      res.send(err)
+    }
   },
   getUser: (req, res) => {
     userService.getUser(req, res, (data) => {

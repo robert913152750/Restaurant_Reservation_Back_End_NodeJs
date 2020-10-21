@@ -48,7 +48,7 @@ const businessService = {
         limit: mealPageLimit,
         offset: offset
       })
-      console.log(meals)
+
       const mealCategory = await MealCategory.findAll({
         where: { RestaurantId: restaurantId }
       })
