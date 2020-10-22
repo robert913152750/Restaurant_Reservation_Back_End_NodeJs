@@ -25,7 +25,7 @@ const orderService = {
       const MerchantOrderNo = req.body.MerchantOrderNo
       const seatCount = req.body.info.seat
 
-      await Order.create({
+      const order = await Order.create({
         UserId: Number(req.user.dataValues.id),
         time: time.toString(),
         peopleCount: seatCount,
