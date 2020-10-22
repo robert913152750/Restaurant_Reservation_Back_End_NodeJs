@@ -11,7 +11,6 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       Order.belongsTo(models.User)
-      Order.belongsTo(models.RestaurantSeat)
       Order.hasMany(models.OrderItem)
       Order.hasMany(models.Payment)
     }

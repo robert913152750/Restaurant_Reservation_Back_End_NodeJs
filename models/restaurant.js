@@ -14,7 +14,6 @@ module.exports = (sequelize, DataTypes) => {
       Restaurant.belongsTo(models.City)
       Restaurant.belongsTo(models.User)
       Restaurant.hasMany(models.Meal)
-      Restaurant.hasOne(models.RestaurantSeat)
       Restaurant.hasMany(models.Comment)
       Restaurant.hasMany(models.MealCategory)
     }
