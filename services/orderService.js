@@ -25,43 +25,32 @@ const orderService = {
       const MerchantOrderNo = req.body.MerchantOrderNo
       const seatCount = req.body.info.seat
 
-      RestaurantSeat.findOne({
-        where: { RestaurantId: req.params.id }
-      }).then((seat) => {
-        Order.create({
-          UserId: Number(req.user.dataValues.id),
-          RestaurantSeatId: Number(seat.dataValues.id),
-          time: time.toString(),
-          peopleCount: seatCount,
-          note: note,
-          reserve_name: name,
-          reserve_phone: phone,
-          date: date.toString(),
-          totalPrice: Number(totalPrice),
-          MerchantOrderNo: MerchantOrderNo
-        }).then((order) => {
-          let meals = req.body.orders
-          OrderItem.bulkCreate(
-            Array.from({ length: meals.length }).map((_, index) => ({
-              MealId: Number(meals[index].id),
-              OrderId: Number(order.dataValues.id),
-              quantity: Number(meals[index].quantity)
-            }))
-          ).then((bulk) => {
-            let restSeat = seat.seat - order.peopleCount
-            seat.update({
-              seat: restSeat
-            }).then(() => {
-              return callback({
-                status: 'success',
-                message: '訂位&訂餐成功',
-                order: order
-              })
-            })
-          })
-
-        })
+      await Order.create({
+        UserId: Number(req.user.dataValues.id),
+        time: time.toString(),
+        peopleCount: seatCount,
+        note: note,
+        reserve_name: name,
+        reserve_phone: phone,
+        date: date.toString(),
+        totalPrice: Number(totalPrice),
+        MerchantOrderNo: MerchantOrderNo
       })
+
+      let meals = req.body.orders
+      await OrderItem.bulkCreate(
+        Array.from({ length: meals.length }).map((_, index) => ({
+          MealId: Number(meals[index].id),
+          OrderId: Number(order.dataValues.id),
+          quantity: Number(meals[index].quantity)
+        }))
+      )
+      return callback({
+        status: 'success',
+        message: '訂位&訂餐成功',
+        order: order
+      })
+
     } catch (err) {
       console.log(err)
       return callback({ status: 'error', message: '交易失敗' })
