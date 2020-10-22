@@ -105,6 +105,8 @@ const restService = {
       whereQuery['MealCategoryId'] = MealCategoryId
     }
 
+    whereQuery['isSale'] = true
+
     Meal.findAndCountAll({
       include: [
         { model: MealCategory }
