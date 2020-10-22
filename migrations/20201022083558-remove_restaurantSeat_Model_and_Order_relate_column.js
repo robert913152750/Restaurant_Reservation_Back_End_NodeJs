@@ -3,7 +3,7 @@
 module.exports = {
   up: async (queryInterface, Sequelize) => {
     await queryInterface.dropTable('RestaurantSeats');
-    await queryInterface.removeColumn('Orders', 'RestaurantSeatsId')
+    await queryInterface.removeColumn('Orders', 'RestaurantSeatId')
   },
 
   down: async (queryInterface, Sequelize) => {
