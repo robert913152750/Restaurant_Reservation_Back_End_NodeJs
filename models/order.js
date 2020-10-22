@@ -11,14 +11,14 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate (models) {
       Order.belongsTo(models.User)
-      Order.belongsTo(models.RestaurantSeat)
       Order.hasMany(models.OrderItem)
       Order.hasMany(models.Payment)
+      Order.belongsTo(models.Restaurant)
     }
   };
   Order.init({
     UserId: DataTypes.INTEGER,
-    RestaurantSeatId: DataTypes.INTEGER,
+    RestaurantId: DataTypes.INTEGER,
     time: DataTypes.STRING,
     peopleCount: DataTypes.INTEGER,
     note: DataTypes.STRING,
