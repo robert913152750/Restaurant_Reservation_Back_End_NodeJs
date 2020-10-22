@@ -21,6 +21,7 @@ const orderService = {
         return callback({ status: 'error', message: '所有欄位為必填' })
       }
       const { time, name, phone, date, note } = req.body.info
+      const RestaurantId = req.params.id
       const totalPrice = req.body.totalPrice
       const MerchantOrderNo = req.body.MerchantOrderNo
       const seatCount = req.body.info.seat
@@ -28,6 +29,7 @@ const orderService = {
       const order = await Order.create({
         UserId: Number(req.user.dataValues.id),
         time: time.toString(),
+        RestaurantId: Number(RestaurantId),
         peopleCount: seatCount,
         note: note,
         reserve_name: name,

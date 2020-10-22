@@ -77,7 +77,7 @@ const userService = {
           },
           include: [
             { model: OrderItem, include: { model: Meal } },
-            { model: RestaurantSeat, include: { model: Restaurant } }
+            { model: Restaurant }
           ],
           offset: offset,
           limit: ordersPageLimit
@@ -94,7 +94,7 @@ const userService = {
           },
           include: [
             { model: OrderItem, include: { model: Meal } },
-            { model: RestaurantSeat, include: { model: Restaurant } }
+            { model: Restaurant }
           ],
           offset: offset,
           limit: ordersPageLimit
@@ -108,7 +108,7 @@ const userService = {
           },
           include: [
             { model: OrderItem, include: { model: Meal } },
-            { model: RestaurantSeat, include: { model: Restaurant } }
+            { model: Restaurant }
           ],
           offset: offset,
           limit: ordersPageLimit
@@ -139,7 +139,7 @@ const userService = {
           quantity: m.quantity,
           price: m.Meal.price
         })),
-        restaurantName: item.RestaurantSeat.Restaurant.name
+        restaurantName: item.Restaurant.name
       }))
       return callback({
         orders: results,

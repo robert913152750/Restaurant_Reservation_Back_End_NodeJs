@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
   };
   Order.init({
     UserId: DataTypes.INTEGER,
-    RestaurantSeatId: DataTypes.INTEGER,
+    RestaurantId: DataTypes.INTEGER,
     time: DataTypes.STRING,
     peopleCount: DataTypes.INTEGER,
     note: DataTypes.STRING,
