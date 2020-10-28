@@ -34,8 +34,8 @@ const restService = {
         whereQuery['CityId'] = CityId
       }
 
-      if (req.body.search) {
-        search = req.body.search
+      if (req.query.search) {
+        search = req.query.search
       }
 
       const restaurants = await Restaurant.findAndCountAll({
