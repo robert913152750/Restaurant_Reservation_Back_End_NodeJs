@@ -162,7 +162,10 @@ const userService = {
       })
     } catch (err) {
       console.log(err)
-      res.send(err)
+      callback({
+        status: 'error',
+        message: 'something wrong'
+      })
     }
   },
   async putUser (req, res, callback) {
@@ -218,7 +221,10 @@ const userService = {
       callback({ user: user })
     } catch (err) {
       console.log(err)
-      res.send(err)
+      callback({
+        status: 'error',
+        message: 'something wrong'
+      })
     }
   }
 }
