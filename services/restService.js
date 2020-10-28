@@ -86,7 +86,10 @@ const restService = {
 
     } catch (err) {
       console.log(err)
-      res.send(err)
+      return callback({
+        status: 'error',
+        message: 'something wrong'
+      })
     }
   },
   getRestaurant: (req, res, callback) => {
