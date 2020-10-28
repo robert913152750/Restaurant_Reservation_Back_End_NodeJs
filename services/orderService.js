@@ -59,16 +59,24 @@ const orderService = {
     }
   },
   async cancelOrder (req, res, callback) {
-    const order = await Order.findByPk(req.params.id)
-    await order.update({
-      status: '取消訂單'
-    })
-
-    callback({
-      status: 'success',
-      message: '訂單取消成功',
-      order: order
-    })
+    try {
+      const order = await Order.findByPk(req.params.id)
+      await order.update({
+        status: '取消訂單'
+      })
+      callback({
+        status: 'success',
+        message: '訂單取消成功',
+        order: order
+      })
+    } catch (err) {
+      console.log(err)
+      callback({
+        status: 'error',
+        message: '訂單取消失敗',
+        err: err
+      })
+    }
   },
   async getPayment (req, res, callback) {
     const order = await Order.findByPk(req.params.id)
