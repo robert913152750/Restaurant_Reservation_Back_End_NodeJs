@@ -15,14 +15,22 @@ const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const userService = {
-  getUser: (req, res, callback) => {
-    return User.findByPk(req.user.dataValues.id, {
-      include: [
-        { model: Restaurant }
-      ]
-    }).then(user => {
-      callback({ profile: user })
-    })
+  async getUser (req, res, callback) {
+    try {
+      const user = await User.findByPk(req.user.dataValues.id, {
+        include: [
+          { model: Restaurant }
+        ]
+      })
+      return callback({ profile: user })
+
+    } catch (err) {
+      console.log(err)
+      return callback({
+        status: 'error',
+        message: 'something wrong'
+      })
+    }
   },
   postComment: (req, res, callback) => {
     if (!req.body.rating) return callback({ status: 'error', message: '評分為必填' })
