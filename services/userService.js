@@ -32,38 +32,43 @@ const userService = {
       })
     }
   },
-  postComment: (req, res, callback) => {
-    if (!req.body.rating) return callback({ status: 'error', message: '評分為必填' })
-    Comment.create({
-      UserId: req.user.dataValues.id,
-      RestaurantId: req.body.RestaurantId,
-      content: req.body.content,
-      rating: req.body.rating
-    }).then(comment => {
-      Restaurant.findByPk(req.body.RestaurantId, {
+  async postComment (req, res, callback) {
+    try {
+      if (!req.body.rating) return callback({ status: 'error', message: '評分為必填' })
+      const comment = await Comment.create({
+        UserId: req.user.dataValues.id,
+        RestaurantId: req.body.RestaurantId,
+        content: req.body.content,
+        rating: req.body.rating
+      })
+      const restaurant = await Restaurant.findByPk(req.body.RestaurantId, {
         include: [{ model: Comment }]
-      }).then(restaurant => {
-        const ratingAverage = function () {
-          let ratingTotall = 0
-          for (i = 0; i < restaurant.Comments.length; i++) {
-            ratingTotall += restaurant.Comments[i].rating
-          }
-          return (ratingTotall / restaurant.Comments.length).toFixed(1)
+      })
+      const ratingAverage = function () {
+        let ratingTotall = 0
+        for (i = 0; i < restaurant.Comments.length; i++) {
+          ratingTotall += restaurant.Comments[i].rating
         }
-        let ratingAve = ratingAverage(restaurant)
-        restaurant.update({
-          ratingAve: ratingAve.toString()
-        }).then(restaurant => {
-          return callback({
-            status: 'success',
-            message: '評論新增成功',
-            comment: comment
-          })
-        })
+        return (ratingTotall / restaurant.Comments.length).toFixed(1)
+      }
+      const ratingAve = ratingAverage(restaurant)
+      await restaurant.update({
+        ratingAve: ratingAve.toString()
       })
 
-    })
-      .catch(err => res.send(err))
+      return callback({
+        status: 'success',
+        message: '評論新增成功',
+        comment: comment
+      })
+    } catch (err) {
+      console.log(err)
+      callback({
+        status: 'error',
+        message: '評論新增失敗'
+      })
+    }
+
   },
   async getOrders (req, res, callback) {
     try {
