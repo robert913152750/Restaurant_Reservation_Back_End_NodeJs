@@ -8,45 +8,58 @@ const Meal = db.Meal
 const MealCategory = db.MealCategory
 const pageLimit = 12
 const mealPageLimit = 10
+const { Op } = require("sequelize");
 
 
 const restService = {
-  getRestaurants: (req, res, callback) => {
-    let offset = 0
-    let whereQuery = {}
-    let CategoryId = ''
-    let CityId = ''
+  async getRestaurants (req, res, callback) {
+    try {
+      let offset = 0
+      let whereQuery = {}
+      let CategoryId = ''
+      let CityId = ''
+      let search = ''
 
-    if (req.query.page) {
-      offset = (req.query.page - 1) * pageLimit
-    }
+      if (req.query.page) {
+        offset = (req.query.page - 1) * pageLimit
+      }
 
-    if (req.query.CategoryId) {
-      CategoryId = Number(req.query.CategoryId)
-      whereQuery['CategoryId'] = CategoryId
-    }
+      if (req.query.CategoryId) {
+        CategoryId = Number(req.query.CategoryId)
+        whereQuery['CategoryId'] = CategoryId
+      }
 
-    if (req.query.CityId) {
-      CityId = Number(req.query.CityId)
-      whereQuery['CityId'] = CityId
-    }
+      if (req.query.CityId) {
+        CityId = Number(req.query.CityId)
+        whereQuery['CityId'] = CityId
+      }
 
-    Restaurant.findAndCountAll({
-      include: [
-        Category,
-        City
-      ],
-      where: whereQuery,
-      offset: offset,
-      limit: pageLimit
-    }).then(restaurants => {
+      if (req.body.search) {
+        search = req.body.search
+      }
+
+      const restaurants = await Restaurant.findAndCountAll({
+        include: [
+          Category,
+          City
+        ],
+        where: [
+          whereQuery,
+          {
+            name: {
+              [Op.substring]: `${search}`
+            }
+          }
+        ],
+        offset: offset,
+        limit: pageLimit
+      })
       const page = Number(req.query.page) || 1
       const pages = Math.ceil(restaurants.count / pageLimit)
       const totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
 
       const prev = page - 1 < 1 ? 1 : page - 1
       const next = page + 1 > pages ? pages : page + 1
-
 
       const data = restaurants.rows.map(r => ({
         ...r.dataValues,
@@ -55,25 +68,26 @@ const restService = {
         cityName: r.dataValues.City.name
       }))
 
-      Category.findAll({
-      }).then(categories => {
-        City.findAll({
-        }).then(cities => {
-          return callback({
-            restaurants: restaurants,
-            categories: categories,
-            cities: cities,
-            CategoryId: CategoryId,
-            CityId: CityId,
-            page: page,
-            totalPage: totalPage,
-            prev: prev,
-            next: next
-          })
-        })
+      const categories = await Category.findAll
+      const cities = await City.findAll
+
+
+      return callback({
+        restaurants: data,
+        categories: categories,
+        cities: cities,
+        CategoryId: CategoryId,
+        CityId: CityId,
+        page: page,
+        totalPage: totalPage,
+        prev: prev,
+        next: next
       })
-    })
-      .catch(err => res.send(err))
+
+    } catch (err) {
+      console.log(err)
+      res.send(err)
+    }
   },
   getRestaurant: (req, res, callback) => {
     Restaurant.findByPk(req.params.id, {
