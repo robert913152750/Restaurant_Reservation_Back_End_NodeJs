@@ -92,19 +92,24 @@ const restService = {
       })
     }
   },
-  getRestaurant: (req, res, callback) => {
-    Restaurant.findByPk(req.params.id, {
-      include: [
-        { model: Category },
-        { model: City },
-        { model: Comment, include: [{ model: User }] }
-      ]
-    }).then(restaurant => {
-      callback({
-        restaurant: restaurant
+  async getRestaurant (req, res, callback) {
+    try {
+      const restaurant = await Restaurant.findByPk(req.params.id, {
+        include: [
+          { model: Category },
+          { model: City },
+          { model: Comment, include: [{ model: User }] }
+        ]
       })
-    })
-      .catch(err => res.send(err))
+      callback({ restaurant })
+
+    } catch (err) {
+      console.log(err)
+      return callback({
+        status: 'error',
+        message: 'something wrong'
+      })
+    }
   },
   getMeals: (req, res, callback) => {
     let offset = 0

@@ -64,14 +64,14 @@ const orderService = {
       await order.update({
         status: '取消訂單'
       })
-      callback({
+      return callback({
         status: 'success',
         message: '訂單取消成功',
         order: order
       })
     } catch (err) {
       console.log(err)
-      callback({
+      return callback({
         status: 'error',
         message: '訂單取消失敗'
       })
@@ -88,7 +88,7 @@ const orderService = {
 
     } catch (err) {
       console.log(err)
-      callback({
+      return callback({
         status: 'error',
         message: 'something wrong'
       })
@@ -115,7 +115,7 @@ const orderService = {
 
     } catch (err) {
       console.log(err)
-      callback({
+      return callback({
         status: 'error',
         message: '付款失敗'
       })
