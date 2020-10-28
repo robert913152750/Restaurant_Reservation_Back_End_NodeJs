@@ -59,24 +59,40 @@ const orderService = {
     }
   },
   async cancelOrder (req, res, callback) {
-    const order = await Order.findByPk(req.params.id)
-    await order.update({
-      status: '取消訂單'
-    })
-
-    callback({
-      status: 'success',
-      message: '訂單取消成功',
-      order: order
-    })
+    try {
+      const order = await Order.findByPk(req.params.id)
+      await order.update({
+        status: '取消訂單'
+      })
+      return callback({
+        status: 'success',
+        message: '訂單取消成功',
+        order: order
+      })
+    } catch (err) {
+      console.log(err)
+      return callback({
+        status: 'error',
+        message: '訂單取消失敗'
+      })
+    }
   },
   async getPayment (req, res, callback) {
-    const order = await Order.findByPk(req.params.id)
-    const user = await User.findByPk(req.user.dataValues.id)
-    const userEmail = user.email
-    console.log('=========')
-    const tradeInfo = payment.getTradeInfo(order.totalPrice, '餐廳訂單', userEmail)
-    return callback({ payment: { order, tradeInfo } })
+    try {
+      const order = await Order.findByPk(req.params.id)
+      const user = await User.findByPk(req.user.dataValues.id)
+      const userEmail = user.email
+      console.log('=========')
+      const tradeInfo = payment.getTradeInfo(order.totalPrice, '餐廳訂單', userEmail)
+      return callback({ payment: { order, tradeInfo } })
+
+    } catch (err) {
+      console.log(err)
+      return callback({
+        status: 'error',
+        message: 'something wrong'
+      })
+    }
   },
   async newebpayCallback (req, res, callback) {
     try {
@@ -99,7 +115,10 @@ const orderService = {
 
     } catch (err) {
       console.log(err)
-      res.send(err)
+      return callback({
+        status: 'error',
+        message: '付款失敗'
+      })
     }
 
 
