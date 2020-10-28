@@ -93,7 +93,6 @@ const orderService = {
         message: 'something wrong'
       })
     }
-
   },
   async newebpayCallback (req, res, callback) {
     try {
@@ -116,7 +115,10 @@ const orderService = {
 
     } catch (err) {
       console.log(err)
-      res.send(err)
+      callback({
+        status: 'error',
+        message: '付款失敗'
+      })
     }
 
 
