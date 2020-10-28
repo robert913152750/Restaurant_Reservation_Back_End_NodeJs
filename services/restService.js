@@ -111,32 +111,33 @@ const restService = {
       })
     }
   },
-  getMeals: (req, res, callback) => {
-    let offset = 0
-    let whereQuery = {}
-    let MealCategoryId = ''
-    let RestaurantId = Number(req.params.id)
+  async getMeals (req, res, callback) {
+    try {
+      let offset = 0
+      let whereQuery = {}
+      let MealCategoryId = ''
+      let RestaurantId = Number(req.params.id)
 
-    if (req.query.page) {
-      offset = (req.query.page - 1) * mealPageLimit
-    }
+      if (req.query.page) {
+        offset = (req.query.page - 1) * mealPageLimit
+      }
 
-    whereQuery['RestaurantId'] = RestaurantId
-    if (req.query.MealCategoryId) {
-      MealCategoryId = Number(req.query.MealCategoryId)
-      whereQuery['MealCategoryId'] = MealCategoryId
-    }
+      whereQuery['RestaurantId'] = RestaurantId
+      if (req.query.MealCategoryId) {
+        MealCategoryId = Number(req.query.MealCategoryId)
+        whereQuery['MealCategoryId'] = MealCategoryId
+      }
 
-    whereQuery['isSale'] = true
+      whereQuery['isSale'] = true
+      const meals = await Meal.findAndCountAll({
+        include: [
+          { model: MealCategory }
+        ],
+        where: whereQuery,
+        limit: mealPageLimit,
+        offset: offset
+      })
 
-    Meal.findAndCountAll({
-      include: [
-        { model: MealCategory }
-      ],
-      where: whereQuery,
-      limit: mealPageLimit,
-      offset: offset
-    }).then((meals) => {
       let page = Number(req.query.page) || 1
       let pages = Math.ceil(meals.count / mealPageLimit)
       let totalPage = Array.from({ length: pages }).map((_, index) => index + 1)
@@ -148,21 +149,26 @@ const restService = {
         ...m.dataValues,
       }))
 
-      MealCategory.findAll({
+      const categories = await MealCategory.findAll({
         where: { RestaurantId: RestaurantId }
-      }).then(categories => {
-        return callback({
-          meals: data,
-          mealCategory: categories,
-          page: page,
-          totalPage: totalPage,
-          prev: prev,
-          next: next
-        })
       })
-    })
-      .catch(err => res.send(err))
 
+      return callback({
+        meals: data,
+        mealCategory: categories,
+        page: page,
+        totalPage: totalPage,
+        prev: prev,
+        next: next
+      })
+
+    } catch (err) {
+      console.log(err)
+      return callback({
+        status: 'error',
+        message: 'something wrong'
+      })
+    }
   }
 }
 
