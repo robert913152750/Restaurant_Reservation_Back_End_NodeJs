@@ -19,7 +19,7 @@ app.use((req, res, next) => {
   next()
 })
 app.listen(port, () => {
-  console.log('app is running on express ')
+  console.log('app is running')
 })
 
 require('./routes')(app)
