@@ -8,45 +8,58 @@ const Meal = db.Meal
 const MealCategory = db.MealCategory
 const pageLimit = 12
 const mealPageLimit = 10
+const { Op } = require("sequelize");
 
 
 const restService = {
-  getRestaurants: (req, res, callback) => {
-    let offset = 0
-    let whereQuery = {}
-    let CategoryId = ''
-    let CityId = ''
+  async getRestaurants (req, res, callback) {
+    try {
+      let offset = 0
+      let whereQuery = {}
+      let CategoryId = ''
+      let CityId = ''
+      let search = ''
 
-    if (req.query.page) {
-      offset = (req.query.page - 1) * pageLimit
-    }
+      if (req.query.page) {
+        offset = (req.query.page - 1) * pageLimit
+      }
 
-    if (req.query.CategoryId) {
-      CategoryId = Number(req.query.CategoryId)
-      whereQuery['CategoryId'] = CategoryId
-    }
+      if (req.query.CategoryId) {
+        CategoryId = Number(req.query.CategoryId)
+        whereQuery['CategoryId'] = CategoryId
+      }
 
-    if (req.query.CityId) {
-      CityId = Number(req.query.CityId)
-      whereQuery['CityId'] = CityId
-    }
+      if (req.query.CityId) {
+        CityId = Number(req.query.CityId)
+        whereQuery['CityId'] = CityId
+      }
 
-    Restaurant.findAndCountAll({
-      include: [
-        Category,
-        City
-      ],
-      where: whereQuery,
-      offset: offset,
-      limit: pageLimit
-    }).then(restaurants => {
+      if (req.query.search) {
+        search = req.query.search
+      }
+
+      const restaurants = await Restaurant.findAndCountAll({
+        include: [
+          Category,
+          City
+        ],
+        where: [
+          whereQuery,
+          {
+            name: {
+              [Op.substring]: `${search}`
+            }
+          }
+        ],
+        offset: offset,
+        limit: pageLimit
+      })
       const page = Number(req.query.page) || 1
       const pages = Math.ceil(restaurants.count / pageLimit)
       const totalPage = Array.from({ length: pages }).map((item, index) => index + 1)
 
       const prev = page - 1 < 1 ? 1 : page - 1
       const next = page + 1 > pages ? pages : page + 1
-
 
       const data = restaurants.rows.map(r => ({
         ...r.dataValues,
@@ -55,66 +68,76 @@ const restService = {
         cityName: r.dataValues.City.name
       }))
 
-      Category.findAll({
-      }).then(categories => {
-        City.findAll({
-        }).then(cities => {
-          return callback({
-            restaurants: restaurants,
-            categories: categories,
-            cities: cities,
-            CategoryId: CategoryId,
-            CityId: CityId,
-            page: page,
-            totalPage: totalPage,
-            prev: prev,
-            next: next
-          })
-        })
+      const categories = await Category.findAll
+      const cities = await City.findAll
+
+
+      return callback({
+        restaurants: data,
+        categories: categories,
+        cities: cities,
+        CategoryId: CategoryId,
+        CityId: CityId,
+        page: page,
+        totalPage: totalPage,
+        prev: prev,
+        next: next
       })
-    })
-      .catch(err => res.send(err))
-  },
-  getRestaurant: (req, res, callback) => {
-    Restaurant.findByPk(req.params.id, {
-      include: [
-        { model: Category },
-        { model: City },
-        { model: Comment, include: [{ model: User }] }
-      ]
-    }).then(restaurant => {
-      callback({
-        restaurant: restaurant
+
+    } catch (err) {
+      console.log(err)
+      return callback({
+        status: 'error',
+        message: 'something wrong'
       })
-    })
-      .catch(err => res.send(err))
+    }
   },
-  getMeals: (req, res, callback) => {
-    let offset = 0
-    let whereQuery = {}
-    let MealCategoryId = ''
-    let RestaurantId = Number(req.params.id)
+  async getRestaurant (req, res, callback) {
+    try {
+      const restaurant = await Restaurant.findByPk(req.params.id, {
+        include: [
+          { model: Category },
+          { model: City },
+          { model: Comment, include: [{ model: User }] }
+        ]
+      })
+      callback({ restaurant })
 
-    if (req.query.page) {
-      offset = (req.query.page - 1) * mealPageLimit
+    } catch (err) {
+      console.log(err)
+      return callback({
+        status: 'error',
+        message: 'something wrong'
+      })
     }
+  },
+  async getMeals (req, res, callback) {
+    try {
+      let offset = 0
+      let whereQuery = {}
+      let MealCategoryId = ''
+      let RestaurantId = Number(req.params.id)
 
-    whereQuery['RestaurantId'] = RestaurantId
-    if (req.query.MealCategoryId) {
-      MealCategoryId = Number(req.query.MealCategoryId)
-      whereQuery['MealCategoryId'] = MealCategoryId
-    }
+      if (req.query.page) {
+        offset = (req.query.page - 1) * mealPageLimit
+      }
 
-    whereQuery['isSale'] = true
+      whereQuery['RestaurantId'] = RestaurantId
+      if (req.query.MealCategoryId) {
+        MealCategoryId = Number(req.query.MealCategoryId)
+        whereQuery['MealCategoryId'] = MealCategoryId
+      }
 
-    Meal.findAndCountAll({
-      include: [
-        { model: MealCategory }
-      ],
-      where: whereQuery,
-      limit: mealPageLimit,
-      offset: offset
-    }).then((meals) => {
+      whereQuery['isSale'] = true
+      const meals = await Meal.findAndCountAll({
+        include: [
+          { model: MealCategory }
+        ],
+        where: whereQuery,
+        limit: mealPageLimit,
+        offset: offset
+      })
+
       let page = Number(req.query.page) || 1
       let pages = Math.ceil(meals.count / mealPageLimit)
       let totalPage = Array.from({ length: pages }).map((_, index) => index + 1)
@@ -126,21 +149,26 @@ const restService = {
         ...m.dataValues,
       }))
 
-      MealCategory.findAll({
+      const categories = await MealCategory.findAll({
         where: { RestaurantId: RestaurantId }
-      }).then(categories => {
-        return callback({
-          meals: data,
-          mealCategory: categories,
-          page: page,
-          totalPage: totalPage,
-          prev: prev,
-          next: next
-        })
       })
-    })
-      .catch(err => res.send(err))
 
+      return callback({
+        meals: data,
+        mealCategory: categories,
+        page: page,
+        totalPage: totalPage,
+        prev: prev,
+        next: next
+      })
+
+    } catch (err) {
+      console.log(err)
+      return callback({
+        status: 'error',
+        message: 'something wrong'
+      })
+    }
   }
 }
 

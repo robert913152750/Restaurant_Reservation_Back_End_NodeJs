@@ -15,47 +15,60 @@ const imgur = require('imgur-node-api')
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID
 
 const userService = {
-  getUser: (req, res, callback) => {
-    return User.findByPk(req.user.dataValues.id, {
-      include: [
-        { model: Restaurant }
-      ]
-    }).then(user => {
-      callback({ profile: user })
-    })
+  async getUser (req, res, callback) {
+    try {
+      const user = await User.findByPk(req.user.dataValues.id, {
+        include: [
+          { model: Restaurant }
+        ]
+      })
+      return callback({ profile: user })
+
+    } catch (err) {
+      console.log(err)
+      return callback({
+        status: 'error',
+        message: 'something wrong'
+      })
+    }
   },
-  postComment: (req, res, callback) => {
-    if (!req.body.rating) return callback({ status: 'error', message: '評分為必填' })
-    Comment.create({
-      UserId: req.user.dataValues.id,
-      RestaurantId: req.body.RestaurantId,
-      content: req.body.content,
-      rating: req.body.rating
-    }).then(comment => {
-      Restaurant.findByPk(req.body.RestaurantId, {
+  async postComment (req, res, callback) {
+    try {
+      if (!req.body.rating) return callback({ status: 'error', message: '評分為必填' })
+      const comment = await Comment.create({
+        UserId: req.user.dataValues.id,
+        RestaurantId: req.body.RestaurantId,
+        content: req.body.content,
+        rating: req.body.rating
+      })
+      const restaurant = await Restaurant.findByPk(req.body.RestaurantId, {
         include: [{ model: Comment }]
-      }).then(restaurant => {
-        const ratingAverage = function () {
-          let ratingTotall = 0
-          for (i = 0; i < restaurant.Comments.length; i++) {
-            ratingTotall += restaurant.Comments[i].rating
-          }
-          return (ratingTotall / restaurant.Comments.length).toFixed(1)
+      })
+      const ratingAverage = function () {
+        let ratingTotall = 0
+        for (i = 0; i < restaurant.Comments.length; i++) {
+          ratingTotall += restaurant.Comments[i].rating
         }
-        let ratingAve = ratingAverage(restaurant)
-        restaurant.update({
-          ratingAve: ratingAve.toString()
-        }).then(restaurant => {
-          return callback({
-            status: 'success',
-            message: '評論新增成功',
-            comment: comment
-          })
-        })
+        return (ratingTotall / restaurant.Comments.length).toFixed(1)
+      }
+      const ratingAve = ratingAverage(restaurant)
+      await restaurant.update({
+        ratingAve: ratingAve.toString()
       })
 
-    })
-      .catch(err => res.send(err))
+      return callback({
+        status: 'success',
+        message: '評論新增成功',
+        comment: comment
+      })
+    } catch (err) {
+      console.log(err)
+      callback({
+        status: 'error',
+        message: '評論新增失敗'
+      })
+    }
+
   },
   async getOrders (req, res, callback) {
     try {
@@ -149,7 +162,10 @@ const userService = {
       })
     } catch (err) {
       console.log(err)
-      res.send(err)
+      callback({
+        status: 'error',
+        message: 'something wrong'
+      })
     }
   },
   async putUser (req, res, callback) {
@@ -205,7 +221,10 @@ const userService = {
       callback({ user: user })
     } catch (err) {
       console.log(err)
-      res.send(err)
+      callback({
+        status: 'error',
+        message: 'something wrong'
+      })
     }
   }
 }
