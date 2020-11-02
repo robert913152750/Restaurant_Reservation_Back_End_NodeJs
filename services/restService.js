@@ -68,8 +68,8 @@ const restService = {
         cityName: r.dataValues.City.name
       }))
 
-      const categories = await Category.findAll
-      const cities = await City.findAll
+      const categories = await Category.findAll()
+      const cities = await City.findAll()
 
 
       return callback({
