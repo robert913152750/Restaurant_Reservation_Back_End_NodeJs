@@ -45,7 +45,7 @@ router.post('/newebpay/callback', orderController.newebpayCallback)
 //business_user
 router.get('/business/restaurant', authenticated, authenticatedBusiness, businessController.getRestaurant)
 router.get('/business/menu', authenticated, authenticatedBusiness, businessController.getMenu)
-router.put('/business/restaurant', authenticated, authenticatedBusiness, upload.single('image'), businessController.putRestaurant)
+router.put('/business/restaurant', authenticated, authenticatedBusiness, upload.single('avatar'), businessController.putRestaurant)
 router.put('/business/menu', authenticated, authenticatedBusiness, upload.single('image'), businessController.putMenu)
 router.post('/business/meal', authenticated, authenticatedBusiness, upload.single('image'), businessController.postMeal)
 router.patch('/business/isSale/:id', authenticated, authenticatedBusiness, businessController.patchIsSale)
