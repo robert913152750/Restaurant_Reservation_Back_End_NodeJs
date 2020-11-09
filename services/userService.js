@@ -4,7 +4,6 @@ const Comment = db.Comment
 const Restaurant = db.Restaurant
 const Meal = db.Meal
 const MealCategory = db.MealCategory
-const RestaurantSeat = db.RestaurantSeat
 const Order = db.Order
 const OrderItem = db.OrderItem
 const ordersPageLimit = 10
@@ -176,7 +175,7 @@ const userService = {
       }
       if (password !== checkPassword) return callback({ status: 'error', message: '密碼與確認密碼不同' })
 
-      let emailCheck = await User.findOne({
+      const emailCheck = await User.findOne({
         where: {
           email: email,
           [Op.not]: { id: req.user.dataValues.id }
@@ -186,7 +185,7 @@ const userService = {
 
       const userId = req.user.dataValues.id
       const { file } = req
-      let user = await User.findByPk(userId)
+      const user = await User.findByPk(userId)
 
       if (file) {
         imgur.setClientID(IMGUR_CLIENT_ID)
