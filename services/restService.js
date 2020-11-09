@@ -99,7 +99,8 @@ const restService = {
           { model: Category },
           { model: City },
           { model: Comment, include: [{ model: User }] }
-        ]
+        ],
+        order: [[Comment, 'createdAt', 'DESC']]
       })
       callback({ restaurant })
 
